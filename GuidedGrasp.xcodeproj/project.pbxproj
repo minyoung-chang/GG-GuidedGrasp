@@ -19,6 +19,13 @@
 		43E1469624D569BA009046C4 /* ObjectDetectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E1469524D569BA009046C4 /* ObjectDetectionService.swift */; };
 		43E1469924D56A85009046C4 /* UIDevice+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E1469824D56A85009046C4 /* UIDevice+Extension.swift */; };
 		8A066699263A468600441353 /* GuidingTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A066698263A468600441353 /* GuidingTool.swift */; };
+		8A06670A263A6FF700441353 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A0666F9263A6FF700441353 /* Assets.xcassets */; };
+		8A06670C263A6FF700441353 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0666FC263A6FF700441353 /* Renderer.swift */; };
+		8A06670D263A6FF700441353 /* SensorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0666FE263A6FF700441353 /* SensorController.swift */; };
+		8A06670F263A6FF700441353 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 8A066700263A6FF700441353 /* Shaders.metal */; };
+		8A066710263A6FF700441353 /* MetalBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A066701263A6FF700441353 /* MetalBuffer.swift */; };
+		8A066711263A6FF700441353 /* SensorCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A066702263A6FF700441353 /* SensorCalculator.swift */; };
+		8A066712263A6FF700441353 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A066703263A6FF700441353 /* Helpers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,7 +33,7 @@
 		43220A9C24D5A0C100DD4168 /* YOLOv3Int8LUT.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = YOLOv3Int8LUT.mlmodel; sourceTree = "<group>"; };
 		43220AA024D5B25500DD4168 /* Throttler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Throttler.swift; sourceTree = "<group>"; };
 		43220AA224D5C39400DD4168 /* SCNVector3+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SCNVector3+Extension.swift"; sourceTree = "<group>"; };
-		43221F9F24D56328005A637E /* CoreML-in-ARKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CoreML-in-ARKit.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		43221F9F24D56328005A637E /* GuidedGrasp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GuidedGrasp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		43221FA224D56328005A637E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		43221FA624D56328005A637E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		43221FA924D56328005A637E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -36,6 +43,15 @@
 		43E1469524D569BA009046C4 /* ObjectDetectionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectDetectionService.swift; sourceTree = "<group>"; };
 		43E1469824D56A85009046C4 /* UIDevice+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Extension.swift"; sourceTree = "<group>"; };
 		8A066698263A468600441353 /* GuidingTool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuidingTool.swift; sourceTree = "<group>"; };
+		8A0666F9263A6FF700441353 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		8A0666FA263A6FF700441353 /* SceneDepthPointCloud-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SceneDepthPointCloud-Bridging-Header.h"; sourceTree = "<group>"; };
+		8A0666FC263A6FF700441353 /* Renderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
+		8A0666FD263A6FF700441353 /* ShaderTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
+		8A0666FE263A6FF700441353 /* SensorController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SensorController.swift; sourceTree = "<group>"; };
+		8A066700263A6FF700441353 /* Shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
+		8A066701263A6FF700441353 /* MetalBuffer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetalBuffer.swift; sourceTree = "<group>"; };
+		8A066702263A6FF700441353 /* SensorCalculator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SensorCalculator.swift; sourceTree = "<group>"; };
+		8A066703263A6FF700441353 /* Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,7 +76,7 @@
 		43221FA024D56328005A637E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				43221F9F24D56328005A637E /* CoreML-in-ARKit.app */,
+				43221F9F24D56328005A637E /* GuidedGrasp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -68,6 +84,7 @@
 		43221FA124D56328005A637E /* CoreML-in-ARKit */ = {
 			isa = PBXGroup;
 			children = (
+				8A0666F7263A6F9300441353 /* PointCloud */,
 				438F259A24D8967300B80D7E /* App */,
 				438F259924D8960E00B80D7E /* Controller */,
 				43E1469A24D56B6C009046C4 /* Service */,
@@ -117,12 +134,28 @@
 			path = Service;
 			sourceTree = "<group>";
 		};
+		8A0666F7263A6F9300441353 /* PointCloud */ = {
+			isa = PBXGroup;
+			children = (
+				8A0666F9263A6FF700441353 /* Assets.xcassets */,
+				8A066703263A6FF700441353 /* Helpers.swift */,
+				8A066701263A6FF700441353 /* MetalBuffer.swift */,
+				8A0666FC263A6FF700441353 /* Renderer.swift */,
+				8A0666FA263A6FF700441353 /* SceneDepthPointCloud-Bridging-Header.h */,
+				8A066702263A6FF700441353 /* SensorCalculator.swift */,
+				8A0666FE263A6FF700441353 /* SensorController.swift */,
+				8A066700263A6FF700441353 /* Shaders.metal */,
+				8A0666FD263A6FF700441353 /* ShaderTypes.h */,
+			);
+			path = PointCloud;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		43221F9E24D56328005A637E /* CoreML-in-ARKit */ = {
+		43221F9E24D56328005A637E /* GuidedGrasp */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 43221FB324D5632A005A637E /* Build configuration list for PBXNativeTarget "CoreML-in-ARKit" */;
+			buildConfigurationList = 43221FB324D5632A005A637E /* Build configuration list for PBXNativeTarget "GuidedGrasp" */;
 			buildPhases = (
 				43221F9B24D56328005A637E /* Sources */,
 				43221F9C24D56328005A637E /* Frameworks */,
@@ -132,9 +165,9 @@
 			);
 			dependencies = (
 			);
-			name = "CoreML-in-ARKit";
+			name = GuidedGrasp;
 			productName = "CoreML-in-ARKit";
-			productReference = 43221F9F24D56328005A637E /* CoreML-in-ARKit.app */;
+			productReference = 43221F9F24D56328005A637E /* GuidedGrasp.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -152,7 +185,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 43221F9A24D56328005A637E /* Build configuration list for PBXProject "CoreML-in-ARKit" */;
+			buildConfigurationList = 43221F9A24D56328005A637E /* Build configuration list for PBXProject "GuidedGrasp" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -165,7 +198,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				43221F9E24D56328005A637E /* CoreML-in-ARKit */,
+				43221F9E24D56328005A637E /* GuidedGrasp */,
 			);
 		};
 /* End PBXProject section */
@@ -177,6 +210,7 @@
 			files = (
 				43221FAF24D5632A005A637E /* LaunchScreen.storyboard in Resources */,
 				43221FAC24D5632A005A637E /* Assets.xcassets in Resources */,
+				8A06670A263A6FF700441353 /* Assets.xcassets in Resources */,
 				43221FAA24D56328005A637E /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -192,11 +226,17 @@
 				43221FA724D56328005A637E /* ViewController.swift in Sources */,
 				43E1469924D56A85009046C4 /* UIDevice+Extension.swift in Sources */,
 				43220AA124D5B25500DD4168 /* Throttler.swift in Sources */,
+				8A06670C263A6FF700441353 /* Renderer.swift in Sources */,
+				8A066711263A6FF700441353 /* SensorCalculator.swift in Sources */,
 				43220A9924D59C1B00DD4168 /* BubbleNode.swift in Sources */,
 				43220A9D24D5A0C100DD4168 /* YOLOv3Int8LUT.mlmodel in Sources */,
 				43E1469624D569BA009046C4 /* ObjectDetectionService.swift in Sources */,
+				8A06670F263A6FF700441353 /* Shaders.metal in Sources */,
+				8A066712263A6FF700441353 /* Helpers.swift in Sources */,
 				8A066699263A468600441353 /* GuidingTool.swift in Sources */,
+				8A066710263A6FF700441353 /* MetalBuffer.swift in Sources */,
 				43221FA324D56328005A637E /* AppDelegate.swift in Sources */,
+				8A06670D263A6FF700441353 /* SensorController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -272,7 +312,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -326,7 +366,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -343,13 +383,14 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = N9HKR52W8H;
 				INFOPLIST_FILE = "CoreML-in-ARKit/App/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = TestMLMin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "CoreML-in-ARKit/PointCloud/SceneDepthPointCloud-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -362,13 +403,14 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = N9HKR52W8H;
 				INFOPLIST_FILE = "CoreML-in-ARKit/App/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = TestMLMin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "CoreML-in-ARKit/PointCloud/SceneDepthPointCloud-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -377,7 +419,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		43221F9A24D56328005A637E /* Build configuration list for PBXProject "CoreML-in-ARKit" */ = {
+		43221F9A24D56328005A637E /* Build configuration list for PBXProject "GuidedGrasp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				43221FB124D5632A005A637E /* Debug */,
@@ -386,7 +428,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		43221FB324D5632A005A637E /* Build configuration list for PBXNativeTarget "CoreML-in-ARKit" */ = {
+		43221FB324D5632A005A637E /* Build configuration list for PBXNativeTarget "GuidedGrasp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				43221FB424D5632A005A637E /* Debug */,

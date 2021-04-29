@@ -5,6 +5,9 @@
 //  Created by Yehor Chernenko on 01.08.2020.
 //  Copyright © 2020 Yehor Chernenko. All rights reserved.
 //
+import Metal
+import MetalKit
+
 
 import UIKit
 import Vision
@@ -366,3 +369,19 @@ extension ViewController: ARSessionDelegate {
 }
 
 extension ViewController: ARSCNViewDelegate { }
+
+
+// Point Cloud Related Below
+// MARK: - RenderDestinationProvider
+
+protocol RenderDestinationProvider {
+    var currentRenderPassDescriptor: MTLRenderPassDescriptor? { get }
+    var currentDrawable: CAMetalDrawable? { get }
+    var colorPixelFormat: MTLPixelFormat { get set }
+    var depthStencilPixelFormat: MTLPixelFormat { get set }
+    var sampleCount: Int { get set }
+}
+
+extension MTKView: RenderDestinationProvider {
+    
+}
