@@ -18,7 +18,7 @@
 		43221FAF24D5632A005A637E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 43221FAD24D5632A005A637E /* LaunchScreen.storyboard */; };
 		43E1469624D569BA009046C4 /* ObjectDetectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E1469524D569BA009046C4 /* ObjectDetectionService.swift */; };
 		43E1469924D56A85009046C4 /* UIDevice+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E1469824D56A85009046C4 /* UIDevice+Extension.swift */; };
-		8A90188B2627AAC900E1471F /* ObjectDetector.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8A90188A2627AAC900E1471F /* ObjectDetector.mlmodel */; };
+		8A066699263A468600441353 /* GuidingTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A066698263A468600441353 /* GuidingTool.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,7 +35,7 @@
 		43221FB024D5632A005A637E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		43E1469524D569BA009046C4 /* ObjectDetectionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectDetectionService.swift; sourceTree = "<group>"; };
 		43E1469824D56A85009046C4 /* UIDevice+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Extension.swift"; sourceTree = "<group>"; };
-		8A90188A2627AAC900E1471F /* ObjectDetector.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = ObjectDetector.mlmodel; sourceTree = "<group>"; };
+		8A066698263A468600441353 /* GuidingTool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuidingTool.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,7 +91,6 @@
 			children = (
 				43221FA224D56328005A637E /* AppDelegate.swift */,
 				43220A9C24D5A0C100DD4168 /* YOLOv3Int8LUT.mlmodel */,
-				8A90188A2627AAC900E1471F /* ObjectDetector.mlmodel */,
 				43221FAB24D5632A005A637E /* Assets.xcassets */,
 				43221FAD24D5632A005A637E /* LaunchScreen.storyboard */,
 				43221FB024D5632A005A637E /* Info.plist */,
@@ -111,6 +110,7 @@
 		43E1469A24D56B6C009046C4 /* Service */ = {
 			isa = PBXGroup;
 			children = (
+				8A066698263A468600441353 /* GuidingTool.swift */,
 				43E1469524D569BA009046C4 /* ObjectDetectionService.swift */,
 				43220AA024D5B25500DD4168 /* Throttler.swift */,
 			);
@@ -188,7 +188,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8A90188B2627AAC900E1471F /* ObjectDetector.mlmodel in Sources */,
 				43220AA324D5C39400DD4168 /* SCNVector3+Extension.swift in Sources */,
 				43221FA724D56328005A637E /* ViewController.swift in Sources */,
 				43E1469924D56A85009046C4 /* UIDevice+Extension.swift in Sources */,
@@ -196,6 +195,7 @@
 				43220A9924D59C1B00DD4168 /* BubbleNode.swift in Sources */,
 				43220A9D24D5A0C100DD4168 /* YOLOv3Int8LUT.mlmodel in Sources */,
 				43E1469624D569BA009046C4 /* ObjectDetectionService.swift in Sources */,
+				8A066699263A468600441353 /* GuidingTool.swift in Sources */,
 				43221FA324D56328005A637E /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -348,7 +348,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = MLARKit;
+				PRODUCT_BUNDLE_IDENTIFIER = TestMLMin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -367,7 +367,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = MLARKit;
+				PRODUCT_BUNDLE_IDENTIFIER = TestMLMin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

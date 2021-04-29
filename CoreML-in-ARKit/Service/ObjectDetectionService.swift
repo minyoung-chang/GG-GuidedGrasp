@@ -12,8 +12,7 @@ import Vision
 import SceneKit
 
 class ObjectDetectionService {
-//    var mlModel = try! VNCoreMLModel(for: YOLOv3Int8LUT().model)
-    var mlModel = try! VNCoreMLModel(for: ObjectDetector().model)
+    var mlModel = try! VNCoreMLModel(for: YOLOv3Int8LUT(configuration: .init()).model)
     
     lazy var coreMLRequest: VNCoreMLRequest = {
         return VNCoreMLRequest(model: mlModel,
@@ -49,13 +48,13 @@ private extension ObjectDetectionService {
             complete(.failure(RecognitionError.resultIsEmpty))
             return
         }
-
-        guard let result = results.first(where: { $0.confidence > 0.5 }),
+        
+        guard let result = results.first(where: { $0.confidence > 0.8 }),
             let classification = result.labels.first else {
                 complete(.failure(RecognitionError.lowConfidence))
                 return
         }
-
+        
         let response = Response(boundingBox: result.boundingBox,
                                 classification: classification.identifier)
         

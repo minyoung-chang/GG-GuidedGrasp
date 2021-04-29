@@ -16,6 +16,9 @@ import Speech
 class ViewController: UIViewController {
     var objectDetectionService = ObjectDetectionService()
     let throttler = Throttler(minimumDelay: 0.5, queue: .global(qos: .userInteractive))
+    
+    let guidingTool = GuidingTool()
+    
     var isLoopShouldContinue = true
     var lastLocation: SCNVector3?
     
@@ -117,36 +120,6 @@ class ViewController: UIViewController {
             }
         }
     }
-//    // MARK: - Selecting Phase
-//    private func checkPermissions() {
-//        SFSpeechRecognizer.requestAuthorization { authStatus in
-//            DispatchQueue.main.async {
-//                switch authStatus {
-//                case .authorized: break
-//                default: self.handlePermissionFailed()
-//                }
-//            }
-//        }
-//    }
-//
-//    private func handlePermissionFailed() {
-//        // Present an alert asking the user to change their settings.
-//        let ac = UIAlertController(title: "This app must have access to speech recognition to work.",
-//                                   message: "Please consider updating your settings.", preferredStyle: .alert)
-//        ac.addAction(UIAlertAction(title: "Open settings", style: .default) { _ in
-//            let url = URL(string: UIApplication.openSettingsURLString)!
-//            UIApplication.shared.open(url)
-//        })
-//        ac.addAction(UIAlertAction(title: "Close", style: .cancel))
-//        present(ac, animated: true)
-//    }
-//
-//    private func handleError(withMessage message: String) {
-//        // Present an alert.
-//        let ac = UIAlertController(title: "An error occured", message: message, preferredStyle: .alert)
-//        ac.addAction(UIAlertAction(title: "OK", style: .default))
-//        present(ac, animated: true)
-//    }
     
     // MARK: - Detecting Phase
     func performDetection() {
@@ -222,8 +195,8 @@ class ViewController: UIViewController {
         }
         
         let pixelValues = calculatePixelValues()
-        let targetDirection = checkTargetDirection(pixelValues: pixelValues)
-        let message = getDirectionMessage(targetDirection: targetDirection, distance: distance)
+        let targetDirection = guidingTool.checkTargetDirection(pixelValues: pixelValues)
+        let message = guidingTool.getDirectionMessage(targetDirection: targetDirection, distance: distance)
         
         switch targetDirection {
         case .onScreen:
@@ -249,46 +222,6 @@ class ViewController: UIViewController {
         self.lastCameraPosition = self.currentCameraPosition
     }
     
-    func getDirectionMessage(targetDirection: targetDirection, distance: Float) -> String {
-        switch targetDirection {
-        case .onScreen:
-            return """
-                    on Screen
-                    \(round(distance * 100) / 100.0) m
-                    """
-        case .goUp:
-            return "go Up"
-        case .goDown:
-            return "go Down"
-        case .goLeft:
-            return "go Left"
-        case .goRight:
-            return "go Right"
-        }
-    }
-    
-    enum targetDirection {
-        case onScreen
-        case goUp
-        case goDown
-        case goLeft
-        case goRight
-    }
-    
-    
-    func checkTargetDirection(pixelValues: simd_float4) -> targetDirection {
-        if ((pixelValues.x >= 0.2) && (pixelValues.x <= 0.8) && (pixelValues.y >= 0.1) && (pixelValues.y <= 0.9)) {
-            return .onScreen
-        } else if (pixelValues.x < 0.2) {
-            return .goLeft
-        } else if (pixelValues.x > 0.8) {
-            return .goRight
-        } else if (pixelValues.y < 0.2) {
-            return .goDown
-        } else {
-            return .goUp
-        }
-    }
     
     func calculatePixelValues() -> simd_float4 {
         let targetPosition4 = simd_float4(self.targetPosition!.x, self.targetPosition!.y, self.targetPosition!.z, 1)
