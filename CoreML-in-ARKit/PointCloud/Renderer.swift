@@ -99,7 +99,8 @@ final class Renderer {
     // Particles buffer
     private var particlesBuffer: MetalBuffer<ParticleUniforms>
     private var currentPointIndex = 0
-    private var currentPointCount = 0
+//    private var currentPointCount = 0
+    var currentPointCount = 0
     
     // Camera data
     private var sampleFrame: ARFrame { session.currentFrame! }
