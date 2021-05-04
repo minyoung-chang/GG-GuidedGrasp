@@ -66,6 +66,11 @@ class ViewController: UIViewController, MTKViewDelegate {
     @IBOutlet var sceneView: ARSCNView!
     @IBOutlet weak var sessionInfoLabel: UILabel!
     
+    
+    private var handPoseRequest = VNDetectHumanHandPoseRequest()
+    var thumbTip : CGPoint
+    var indexTip : CGPoint
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 //        checkPermissions()
@@ -238,6 +243,11 @@ class ViewController: UIViewController, MTKViewDelegate {
     // MARK: - Guide Phase
     func performGuidance() {
         
+        //Hand pose: thumbTip and indexTip were calculated by ARSession delegate
+        
+        
+        //End Hand pose
+        
         guard let cameraPosition = self.sceneView.pointOfView?.position else { return }
         self.currentCameraPosition = cameraPosition
         
@@ -399,6 +409,34 @@ extension ViewController: ARSessionDelegate {
             isLoopShouldContinue = speed < 0.0025   // default 0.0025
         }
         lastLocation = currentPositionOfCamera
+        
+        //Hand pose calculation
+        let handler = VNImageRequestHandler(cvPixelBuffer: frame.capturedImage, orientation: .up, options: [:])
+        do {
+            // Perform VNDetectHumanHandPoseRequest
+            try handler.perform([handPoseRequest])
+            // Continue only when a hand was detected in the frame.
+            // Since we set the maximumHandCount property of the request to 1, there will be at most one observation.
+            guard let observation = handPoseRequest.results?.first else {
+                return
+            }
+            // Get points for thumb and index finger.
+            let thumbPoints = try observation.recognizedPoints(.thumb)
+            let indexFingerPoints = try observation.recognizedPoints(.indexFinger)
+            // Look for tip points.
+            guard let thumbTipPoint = thumbPoints[.thumbTip], let indexTipPoint = indexFingerPoints[.indexTip] else {
+                return
+            }
+            // Ignore low confidence points.
+            guard thumbTipPoint.confidence > 0.3 && indexTipPoint.confidence > 0.3 else {
+                return
+            }
+            // Convert points from Vision coordinates to AVFoundation coordinates.
+            thumbTip = CGPoint(x: thumbTipPoint.location.x, y: 1 - thumbTipPoint.location.y)
+            indexTip = CGPoint(x: indexTipPoint.location.x, y: 1 - indexTipPoint.location.y)
+        } catch {
+
+        }
     }
     
     // MARK: - ARSessionObserver
