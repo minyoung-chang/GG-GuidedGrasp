@@ -22,6 +22,7 @@ class ObjectDetectionService {
     private var completion: ((Result<Response, Error>) -> Void)?
     
     func detect(on request: Request, completion: @escaping (Result<Response, Error>) -> Void) {
+        print("detecting..")
         self.completion = completion
         
         let orientation = CGImagePropertyOrientation(rawValue:  UIDevice.current.exifOrientation) ?? .up

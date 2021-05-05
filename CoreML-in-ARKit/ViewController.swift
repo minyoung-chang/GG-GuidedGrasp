@@ -17,6 +17,9 @@ import Speech
 
 // MARK: Set up
 class ViewController: UIViewController, MTKViewDelegate {
+    var handPixelX: Float?
+    var handPixelY: Float?
+    
     var handler: VNImageRequestHandler?
     
     /// POINTCLOUD ZONE BELOW
@@ -146,7 +149,7 @@ class ViewController: UIViewController, MTKViewDelegate {
             return
         }
         let configuration = ARWorldTrackingConfiguration()
-        configuration.planeDetection = .horizontal
+        configuration.planeDetection = [.horizontal, .vertical]
         configuration.frameSemantics = .sceneDepth
         
         if resetTracking {
@@ -194,10 +197,9 @@ class ViewController: UIViewController, MTKViewDelegate {
     
     // MARK: - Detecting Phase
     func performDetection() {
-//        print("hi")
+
 //        guard let currentFrame = sceneView.session.currentFrame else { return }
 //        renderer.draw2(inputFrame: currentFrame)
-//        print("hello")
 //        print(renderer.pointCloudUniformsBuffers.count)
         
         guard let pixelBuffer = sceneView.session.currentFrame?.capturedImage else { return }
@@ -230,10 +232,18 @@ class ViewController: UIViewController, MTKViewDelegate {
                                                   options: [SCNHitTestOption.searchMode: SCNHitTestSearchMode.all.rawValue])
         guard !scnHitTestResults.contains(where: { $0.node.name == BubbleNode.name }) else { return }
         
+        // raycast to flat surface
+//        guard let raycastQuery = sceneView.raycastQuery(from: point,
+//                                                        allowing: .existingPlaneInfinite,
+//                                                        alignment: .horizontal),
+//              let raycastResult = sceneView.session.raycast(raycastQuery).first else { return }
+        
+        // raycast to any mesh
         guard let raycastQuery = sceneView.raycastQuery(from: point,
                                                         allowing: .existingPlaneInfinite,
-                                                        alignment: .horizontal),
+                                                        alignment: .any),
               let raycastResult = sceneView.session.raycast(raycastQuery).first else { return }
+        
         let position = SCNVector3(raycastResult.worldTransform.columns.3.x,
                                   raycastResult.worldTransform.columns.3.y,
                                   raycastResult.worldTransform.columns.3.z)
@@ -260,10 +270,21 @@ class ViewController: UIViewController, MTKViewDelegate {
     func performGuidance() {
         detectHand()
         //Hand pose: thumbTip and indexTip were calculated by ARSession delegate
-        guard let thumbTipX = self.thumbTip?.x else { return }
-        print(Float((self.thumbTip!.x)) * Float(self.sceneView.bounds.width))
-        print(Float((self.thumbTip!.y)) * Float(self.sceneView.bounds.height))
+        guard let thumbTipX = self.thumbTip?.x,
+              let thumbTipY = self.thumbTip?.y
+        else { return }
         
+        self.handPixelX = Float(thumbTipX)
+        self.handPixelY = Float(thumbTipY)
+        
+        self.handPixelX = self.handPixelX! * Float(sceneView.bounds.width)
+        self.handPixelY = self.handPixelY! * Float(sceneView.bounds.height)
+        print(self.handPixelX, self.handPixelY)
+        
+        let handPixelXInt = Int(self.handPixelX!)
+        let handPixelYInt = Int(self.handPixelY!)
+        let handPoint = CGPoint(x: handPixelXInt, y: handPixelYInt)
+        self.calculatePixelToWorld(point: handPoint)
         
         //End Hand pose
         
@@ -303,6 +324,33 @@ class ViewController: UIViewController, MTKViewDelegate {
         
         self.updateMessage(message: message)
         self.lastCameraPosition = self.currentCameraPosition
+    }
+    
+    func calculatePixelToWorld(point: CGPoint) {
+        let scnHitTestResults = sceneView.hitTest(point,
+                                                  options: [SCNHitTestOption.searchMode: SCNHitTestSearchMode.all.rawValue])
+        guard !scnHitTestResults.contains(where: { $0.node.name == BubbleNode.name }) else { return }
+        
+        // raycast to any mesh
+        guard let raycastQuery = sceneView.raycastQuery(from: point,
+                                                        allowing: .existingPlaneInfinite,
+                                                        alignment: .any),
+              let raycastResult = sceneView.session.raycast(raycastQuery).first else { return }
+        
+        let position = SCNVector3(raycastResult.worldTransform.columns.3.x,
+                                  raycastResult.worldTransform.columns.3.y,
+                                  raycastResult.worldTransform.columns.3.z)
+        
+        let bubbleNode = BubbleNode(text: ".")
+        bubbleNode.worldPosition = position
+        
+        sceneView.prepare([bubbleNode]) { [weak self] success in
+            if success {
+                self?.sceneView.scene.rootNode.addChildNode(bubbleNode)
+//                self?.sceneView.scene.rootNode.replaceChildNode(bubbleNode, with: bubbleNode)
+            }
+        }
+        
     }
     
     
