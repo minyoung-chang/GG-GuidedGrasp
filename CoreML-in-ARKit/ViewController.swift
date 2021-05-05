@@ -87,22 +87,33 @@ class ViewController: UIViewController, MTKViewDelegate {
             return
         }
         
-        session.delegate = self
-        
         // Set the view to use the default device
-        if let view = view as? MTKView {
-            view.device = device
-            
-            view.backgroundColor = UIColor.clear
-            // we need this to enable depth test
-            view.depthStencilPixelFormat = .depth32Float
-            view.contentScaleFactor = 1
-            view.delegate = self
-            
-            // Configure the renderer to draw to the view
-            renderer = Renderer(session: session, metalDevice: device, renderDestination: view)
-            renderer.drawRectResized(size: view.bounds.size)
-        }
+        let view = MTKView()
+        view.device = device
+        
+        view.backgroundColor = UIColor.clear
+        // we need this to enable depth test
+        view.depthStencilPixelFormat = .depth32Float
+        view.contentScaleFactor = 1
+        view.delegate = self
+        
+        // Configure the renderer to draw to the view
+        renderer = Renderer(session: session, metalDevice: device, renderDestination: view)
+        renderer.drawRectResized(size: view.bounds.size)
+//        if let view = view as? MTKView {
+//            print("here")
+//            view.device = device
+//
+//            view.backgroundColor = UIColor.clear
+//            // we need this to enable depth test
+//            view.depthStencilPixelFormat = .depth32Float
+//            view.contentScaleFactor = 1
+//            view.delegate = self
+//
+//            // Configure the renderer to draw to the view
+//            renderer = Renderer(session: session, metalDevice: device, renderDestination: view)
+//            renderer.drawRectResized(size: view.bounds.size)
+//        }
         
     }
     
@@ -177,7 +188,11 @@ class ViewController: UIViewController, MTKViewDelegate {
     
     // MARK: - Detecting Phase
     func performDetection() {
-        print(self.renderer?.currentPointCount)
+//        print("hi")
+//        guard let currentFrame = sceneView.session.currentFrame else { return }
+//        renderer.draw2(inputFrame: currentFrame)
+//        print("hello")
+//        print(renderer.pointCloudUniformsBuffers.count)
         
         guard let pixelBuffer = sceneView.session.currentFrame?.capturedImage else { return }
         
@@ -196,7 +211,7 @@ class ViewController: UIViewController, MTKViewDelegate {
                 }
                 
             case .failure(let error):
-                print(error)
+//                print(error)
                 break
             }
         }

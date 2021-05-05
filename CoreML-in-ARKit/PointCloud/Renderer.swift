@@ -33,9 +33,9 @@ final class Renderer {
     var isSavingFile = false
     
     // Maximum number of points we store in the point cloud
-    private let maxPoints = 10_000_000 // default: 500_000
+    let maxPoints = 10_000_000 // default: 500_000
     // Number of sample points on the grid
-    private let numGridPoints = 500
+    let numGridPoints = 500
     // Particle's size in pixels
     private let particleSize: Float = 10    // default: 10
     // We only use landscape orientation in this app
@@ -87,22 +87,23 @@ final class Renderer {
     }()
     private var rgbUniformsBuffers = [MetalBuffer<RGBUniforms>]()
     // Point Cloud buffer
-    private lazy var pointCloudUniforms: PointCloudUniforms = {
+//    private lazy var pointCloudUniforms: PointCloudUniforms = {
+    var pointCloudUniforms: PointCloudUniforms = {
         var uniforms = PointCloudUniforms()
-        uniforms.maxPoints = Int32(maxPoints)
-        uniforms.confidenceThreshold = Int32(confidenceThreshold)
-        uniforms.particleSize = particleSize
-        uniforms.cameraResolution = cameraResolution
+        uniforms.maxPoints = Int32(10_000_000)
+        uniforms.confidenceThreshold = Int32(2)
+        uniforms.particleSize = 10
+//        uniforms.cameraResolution = cameraResolution
         return uniforms
     }()
-    private var pointCloudUniformsBuffers = [MetalBuffer<PointCloudUniforms>]()
+    var pointCloudUniformsBuffers = [MetalBuffer<PointCloudUniforms>]()
     // Particles buffer
     private var particlesBuffer: MetalBuffer<ParticleUniforms>
     private var currentPointIndex = 0
-//    private var currentPointCount = 0
-    var currentPointCount = 0
+    private var currentPointCount = 0
     
     // Camera data
+    
     private var sampleFrame: ARFrame { session.currentFrame! }
     private lazy var cameraResolution = Float2(Float(sampleFrame.camera.imageResolution.width), Float(sampleFrame.camera.imageResolution.height))
     private lazy var viewToCamera = sampleFrame.displayTransform(for: orientation, viewportSize: viewportSize).inverted()
@@ -151,6 +152,7 @@ final class Renderer {
         depthStencilState = device.makeDepthStencilState(descriptor: depthStateDescriptor)!
         
         inFlightSemaphore = DispatchSemaphore(value: maxInFlightBuffers)
+        
     }
     
     func drawRectResized(size: CGSize) {
@@ -218,13 +220,47 @@ final class Renderer {
         
     }
     
+    func draw2(inputFrame: ARFrame?) {
+        print("start")
+//        guard let currentFrame = session.currentFrame,
+        guard let currentFrame = inputFrame,
+            let renderDescriptor = renderDestination.currentRenderPassDescriptor,
+            let commandBuffer = commandQueue.makeCommandBuffer(),
+            let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderDescriptor) else {
+                return
+        }
+        print("end")
+        
+        _ = inFlightSemaphore.wait(timeout: DispatchTime.distantFuture)
+        commandBuffer.addCompletedHandler { [weak self] commandBuffer in
+            if let self = self {
+                self.inFlightSemaphore.signal()
+            }
+        }
+        
+        // update frame data
+        update(frame: currentFrame)
+        updateCapturedImageTextures(frame: currentFrame)
+        
+        // handle buffer rotating
+        currentBufferIndex = (currentBufferIndex + 1) % maxInFlightBuffers
+        pointCloudUniformsBuffers[currentBufferIndex][0] = pointCloudUniforms
+        
+        if shouldAccumulate(frame: currentFrame), updateDepthTextures(frame: currentFrame) {
+            accumulatePoints(frame: currentFrame, commandBuffer: commandBuffer, renderEncoder: renderEncoder)
+        }
+        
+    }
+    
     func draw() {
+        print("start")
         guard let currentFrame = session.currentFrame,
             let renderDescriptor = renderDestination.currentRenderPassDescriptor,
             let commandBuffer = commandQueue.makeCommandBuffer(),
             let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderDescriptor) else {
                 return
         }
+        print("end")
         
         _ = inFlightSemaphore.wait(timeout: DispatchTime.distantFuture)
         commandBuffer.addCompletedHandler { [weak self] commandBuffer in
