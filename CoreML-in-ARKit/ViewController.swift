@@ -17,6 +17,7 @@ import Speech
 
 // MARK: Set up
 class ViewController: UIViewController, MTKViewDelegate {
+    var handler: VNImageRequestHandler?
     
     /// POINTCLOUD ZONE BELOW
     // Called whenever view changes orientation or layout is changed
@@ -68,8 +69,8 @@ class ViewController: UIViewController, MTKViewDelegate {
     
     
     private var handPoseRequest = VNDetectHumanHandPoseRequest()
-    var thumbTip : CGPoint
-    var indexTip : CGPoint
+    var thumbTip: CGPoint?
+    var indexTip: CGPoint?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -103,8 +104,8 @@ class ViewController: UIViewController, MTKViewDelegate {
         view.delegate = self
         
         // Configure the renderer to draw to the view
-        renderer = Renderer(session: session, metalDevice: device, renderDestination: view)
-        renderer.drawRectResized(size: view.bounds.size)
+//        renderer = Renderer(session: session, metalDevice: device, renderDestination: view)
+//        renderer.drawRectResized(size: view.bounds.size)
 //        if let view = view as? MTKView {
 //            print("here")
 //            view.device = device
@@ -257,8 +258,11 @@ class ViewController: UIViewController, MTKViewDelegate {
     
     // MARK: - Guide Phase
     func performGuidance() {
-        
+        detectHand()
         //Hand pose: thumbTip and indexTip were calculated by ARSession delegate
+        guard let thumbTipX = self.thumbTip?.x else { return }
+        print(Float((self.thumbTip!.x)) * Float(self.sceneView.bounds.width))
+        print(Float((self.thumbTip!.y)) * Float(self.sceneView.bounds.height))
         
         
         //End Hand pose
@@ -426,10 +430,14 @@ extension ViewController: ARSessionDelegate {
         lastLocation = currentPositionOfCamera
         
         //Hand pose calculation
-        let handler = VNImageRequestHandler(cvPixelBuffer: frame.capturedImage, orientation: .up, options: [:])
+        self.handler = VNImageRequestHandler(cvPixelBuffer: frame.capturedImage, orientation: .up, options: [:])
+        
+    }
+    
+    func detectHand() {
         do {
             // Perform VNDetectHumanHandPoseRequest
-            try handler.perform([handPoseRequest])
+            try self.handler!.perform([handPoseRequest])
             // Continue only when a hand was detected in the frame.
             // Since we set the maximumHandCount property of the request to 1, there will be at most one observation.
             guard let observation = handPoseRequest.results?.first else {
@@ -450,7 +458,7 @@ extension ViewController: ARSessionDelegate {
             thumbTip = CGPoint(x: thumbTipPoint.location.x, y: 1 - thumbTipPoint.location.y)
             indexTip = CGPoint(x: indexTipPoint.location.x, y: 1 - indexTipPoint.location.y)
         } catch {
-
+            return
         }
     }
     
