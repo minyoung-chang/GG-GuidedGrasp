@@ -277,13 +277,13 @@ class ViewController: UIViewController, MTKViewDelegate {
         self.handPixelX = Float(thumbTipX)
         self.handPixelY = Float(thumbTipY)
         
-        self.handPixelX = self.handPixelX! * Float(sceneView.bounds.width)
-        self.handPixelY = self.handPixelY! * Float(sceneView.bounds.height)
-        print(self.handPixelX, self.handPixelY)
+        self.handPixelX = self.handPixelX! * Float(sceneView.bounds.height)
+        self.handPixelY = self.handPixelY! * Float(sceneView.bounds.width)
+//        print(self.handPixelX, self.handPixelY)
         
         let handPixelXInt = Int(self.handPixelX!)
         let handPixelYInt = Int(self.handPixelY!)
-        let handPoint = CGPoint(x: handPixelXInt, y: handPixelYInt)
+        let handPoint = CGPoint(x: handPixelYInt, y: handPixelXInt) // X and Y are mixed up..
         self.calculatePixelToWorld(point: handPoint)
         
         //End Hand pose
@@ -327,10 +327,6 @@ class ViewController: UIViewController, MTKViewDelegate {
     }
     
     func calculatePixelToWorld(point: CGPoint) {
-        let scnHitTestResults = sceneView.hitTest(point,
-                                                  options: [SCNHitTestOption.searchMode: SCNHitTestSearchMode.all.rawValue])
-        guard !scnHitTestResults.contains(where: { $0.node.name == BubbleNode.name }) else { return }
-        
         // raycast to any mesh
         guard let raycastQuery = sceneView.raycastQuery(from: point,
                                                         allowing: .existingPlaneInfinite,
@@ -503,10 +499,10 @@ extension ViewController: ARSessionDelegate {
                 return
             }
             // Convert points from Vision coordinates to AVFoundation coordinates.
-            thumbTip = CGPoint(x: thumbTipPoint.location.x, y: 1 - thumbTipPoint.location.y)
-            indexTip = CGPoint(x: indexTipPoint.location.x, y: 1 - indexTipPoint.location.y)
+            thumbTip = CGPoint(x: thumbTipPoint.location.x, y: thumbTipPoint.location.y)
+            indexTip = CGPoint(x: indexTipPoint.location.x, y: indexTipPoint.location.y)
         } catch {
-            return
+            
         }
     }
     
