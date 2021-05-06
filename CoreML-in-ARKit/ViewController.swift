@@ -267,8 +267,9 @@ class ViewController: UIViewController, MTKViewDelegate {
     }
     
     // MARK: - Guide Phase
-    func performGuidance() {
-        detectHand()
+    func performGuidance() {    
+        self.detectHand()
+        
         //Hand pose: thumbTip and indexTip were calculated by ARSession delegate
         guard let thumbTipX = self.thumbTip?.x,
               let thumbTipY = self.thumbTip?.y
@@ -279,7 +280,6 @@ class ViewController: UIViewController, MTKViewDelegate {
         
         self.handPixelX = self.handPixelX! * Float(sceneView.bounds.height)
         self.handPixelY = self.handPixelY! * Float(sceneView.bounds.width)
-//        print(self.handPixelX, self.handPixelY)
         
         let handPixelXInt = Int(self.handPixelX!)
         let handPixelYInt = Int(self.handPixelY!)
