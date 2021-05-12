@@ -195,7 +195,6 @@ class ViewController: UIViewController, MTKViewDelegate {
     
     // MARK: - Detecting Phase
     func performDetection() {
-        //TODO: — Trying to accumulate points on self.scenePointCloud, but it seems to be not working. Could you take a look??
         let currentFramePoints = (sceneView.session.currentFrame?.rawFeaturePoints?.points)!
         scenePointCloud.append(contentsOf: currentFramePoints)
         print(currentFramePoints.count, scenePointCloud.count)
