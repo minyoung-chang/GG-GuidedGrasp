@@ -5,8 +5,8 @@
 //  Created by Yehor Chernenko on 01.08.2020.
 //  Copyright © 2020 Yehor Chernenko. All rights reserved.
 //
-import Metal
-import MetalKit
+//import Metal
+//import MetalKit
 
 
 import UIKit
@@ -16,32 +16,14 @@ import AVFoundation
 import Speech
 
 // MARK: Set up
-class ViewController: UIViewController, MTKViewDelegate {
+//class ViewController: UIViewController, MTKViewDelegate {
+class ViewController: UIViewController {
     var scenePointCloud: Array<vector_float3> = Array()
     
     var handPixelX: Float?
     var handPixelY: Float?
     
     var handler: VNImageRequestHandler?
-    
-    /// POINTCLOUD ZONE BELOW
-    // Called whenever view changes orientation or layout is changed
-    func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-        renderer.drawRectResized(size: size)
-    }
-    
-    // Called whenever the view needs to render
-    func draw(in view: MTKView) {
-        renderer.draw()
-    }
-    
-    private let isUIEnabled = true
-//    private let confidenceControl = UISegmentedControl(items: ["Low", "Medium", "High"])
-//    private let rgbRadiusSlider = UISlider()
-    
-    private var renderer: Renderer!
-    /// POINTCLOUD ZONE ABOVE
-    
     
     var objectDetectionService = ObjectDetectionService()
     let throttler = Throttler(minimumDelay: 0.5, queue: .global(qos: .userInteractive))
@@ -86,42 +68,6 @@ class ViewController: UIViewController, MTKViewDelegate {
         
         // Enable Default Lighting - makes the 3D text a bit poppier.
         sceneView.autoenablesDefaultLighting = true
-        
-        // Debug
-//        sceneView.showsStatistics = true
-//        sceneView.debugOptions = [.showFeaturePoints]
-        
-        /// POINTCLOUD ZONE BELOW
-        guard let device = MTLCreateSystemDefaultDevice() else {
-            print("Metal is not supported on this device")
-            return
-        }
-        
-        // Set the view to use the default device
-        let view = MTKView()
-        view.device = device
-        
-        view.backgroundColor = UIColor.clear
-        // we need this to enable depth test
-        view.depthStencilPixelFormat = .depth32Float
-        view.contentScaleFactor = 1
-        view.delegate = self
-        
-        // Configure the renderer to draw to the view
-
-        if let view = view as? MTKView {
-            view.device = device
-
-            view.backgroundColor = UIColor.clear
-            // we need this to enable depth test
-            view.depthStencilPixelFormat = .depth32Float
-            view.contentScaleFactor = 1
-            view.delegate = self
-
-            // Configure the renderer to draw to the view
-            renderer = Renderer(session: sceneView.session, metalDevice: device, renderDestination: view)
-            renderer.drawRectResized(size: view.bounds.size)
-        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -529,20 +475,3 @@ extension ViewController: ARSessionDelegate {
 }
 
 extension ViewController: ARSCNViewDelegate { }
-
-
-// Point Cloud Related Below
-// MARK: - RenderDestinationProvider
-
-protocol RenderDestinationProvider {
-    var currentRenderPassDescriptor: MTLRenderPassDescriptor? { get }
-    var currentDrawable: CAMetalDrawable? { get }
-    var colorPixelFormat: MTLPixelFormat { get set }
-    var depthStencilPixelFormat: MTLPixelFormat { get set }
-    var sampleCount: Int { get set }
-}
-
-extension MTKView: RenderDestinationProvider {
-    
-}
-// Point Cloud Related Above
