@@ -5,8 +5,8 @@ Abstract:
 The host app renderer.
 */
 
-import Metal
-import MetalKit
+//import Metal
+//import MetalKit
 import ARKit
 import UIKit
 import Photos
@@ -100,7 +100,7 @@ final class Renderer {
     // Particles buffer
     private var particlesBuffer: MetalBuffer<ParticleUniforms>
     private var currentPointIndex = 0
-    private var currentPointCount = 0
+    public var currentPointCount = 0
     
     // Camera data
     
@@ -253,15 +253,14 @@ final class Renderer {
     }
     
     func draw() {
-        print("start")
+        print("drawing_start")
         guard let currentFrame = session.currentFrame,
             let renderDescriptor = renderDestination.currentRenderPassDescriptor,
             let commandBuffer = commandQueue.makeCommandBuffer(),
             let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderDescriptor) else {
                 return
         }
-        print("end")
-        
+        print("drawing_end")
         _ = inFlightSemaphore.wait(timeout: DispatchTime.distantFuture)
         commandBuffer.addCompletedHandler { [weak self] commandBuffer in
             if let self = self {

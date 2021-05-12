@@ -17,6 +17,8 @@ import Speech
 
 // MARK: Set up
 class ViewController: UIViewController, MTKViewDelegate {
+    var scenePointCloud: Array<vector_float3>?
+    
     var handPixelX: Float?
     var handPixelY: Float?
     
@@ -108,7 +110,6 @@ class ViewController: UIViewController, MTKViewDelegate {
         // Configure the renderer to draw to the view
 
         if let view = view as? MTKView {
-            print("here")
             view.device = device
 
             view.backgroundColor = UIColor.clear
@@ -121,7 +122,6 @@ class ViewController: UIViewController, MTKViewDelegate {
             renderer = Renderer(session: sceneView.session, metalDevice: device, renderDestination: view)
             renderer.drawRectResized(size: view.bounds.size)
         }
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -195,10 +195,11 @@ class ViewController: UIViewController, MTKViewDelegate {
     
     // MARK: - Detecting Phase
     func performDetection() {
-
-//        guard let currentFrame = sceneView.session.currentFrame else { return }
-//        renderer.draw2(inputFrame: currentFrame)
-//        print(renderer.pointCloudUniformsBuffers.count)
+        //TODO: — Trying to accumulate points on self.scenePointCloud, but it seems to be not working. Could you take a look??
+        let currentFramePoints = (sceneView.session.currentFrame?.rawFeaturePoints?.points)!
+        scenePointCloud?.append(contentsOf: currentFramePoints)
+        print(currentFramePoints.count, scenePointCloud?.count) // keep printing (valid number, nil)
+        
         
         guard let pixelBuffer = sceneView.session.currentFrame?.capturedImage else { return }
         
