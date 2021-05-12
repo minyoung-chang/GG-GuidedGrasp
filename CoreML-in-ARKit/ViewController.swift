@@ -328,6 +328,13 @@ class ViewController: UIViewController, MTKViewDelegate {
     
     func calculatePixelToWorld(point: CGPoint) {
         // raycast to any mesh
+//        let depthPixelBuffer = sceneView.session.currentFrame?.capturedDepthData?.depthDataMap
+        let depthPixelBuffer = sceneView.session.currentFrame?.smoothedSceneDepth?.depthMap
+//        print(depthPixelBuffer)
+        //        depthPixelBuffer
+//        frame.getDistance
+        
+        
         guard let raycastQuery = sceneView.raycastQuery(from: point,
                                                         allowing: .existingPlaneInfinite,
                                                         alignment: .any),
