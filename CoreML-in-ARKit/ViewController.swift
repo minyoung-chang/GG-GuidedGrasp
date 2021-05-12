@@ -37,7 +37,6 @@ class ViewController: UIViewController, MTKViewDelegate {
 //    private let confidenceControl = UISegmentedControl(items: ["Low", "Medium", "High"])
 //    private let rgbRadiusSlider = UISlider()
     
-    private let session = ARSession()
     private var renderer: Renderer!
     /// POINTCLOUD ZONE ABOVE
     
@@ -107,22 +106,21 @@ class ViewController: UIViewController, MTKViewDelegate {
         view.delegate = self
         
         // Configure the renderer to draw to the view
-//        renderer = Renderer(session: session, metalDevice: device, renderDestination: view)
-//        renderer.drawRectResized(size: view.bounds.size)
-//        if let view = view as? MTKView {
-//            print("here")
-//            view.device = device
-//
-//            view.backgroundColor = UIColor.clear
-//            // we need this to enable depth test
-//            view.depthStencilPixelFormat = .depth32Float
-//            view.contentScaleFactor = 1
-//            view.delegate = self
-//
-//            // Configure the renderer to draw to the view
-//            renderer = Renderer(session: session, metalDevice: device, renderDestination: view)
-//            renderer.drawRectResized(size: view.bounds.size)
-//        }
+
+        if let view = view as? MTKView {
+            print("here")
+            view.device = device
+
+            view.backgroundColor = UIColor.clear
+            // we need this to enable depth test
+            view.depthStencilPixelFormat = .depth32Float
+            view.contentScaleFactor = 1
+            view.delegate = self
+
+            // Configure the renderer to draw to the view
+            renderer = Renderer(session: sceneView.session, metalDevice: device, renderDestination: view)
+            renderer.drawRectResized(size: view.bounds.size)
+        }
         
     }
     
