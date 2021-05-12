@@ -17,7 +17,7 @@ import Speech
 
 // MARK: Set up
 class ViewController: UIViewController, MTKViewDelegate {
-    var scenePointCloud: Array<vector_float3>?
+    var scenePointCloud: Array<vector_float3> = Array()
     
     var handPixelX: Float?
     var handPixelY: Float?
@@ -197,9 +197,8 @@ class ViewController: UIViewController, MTKViewDelegate {
     func performDetection() {
         //TODO: — Trying to accumulate points on self.scenePointCloud, but it seems to be not working. Could you take a look??
         let currentFramePoints = (sceneView.session.currentFrame?.rawFeaturePoints?.points)!
-        scenePointCloud?.append(contentsOf: currentFramePoints)
-        print(currentFramePoints.count, scenePointCloud?.count) // keep printing (valid number, nil)
-        
+        scenePointCloud.append(contentsOf: currentFramePoints)
+        print(currentFramePoints.count, scenePointCloud.count)
         
         guard let pixelBuffer = sceneView.session.currentFrame?.capturedImage else { return }
         
