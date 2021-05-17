@@ -350,7 +350,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = TestMLMin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "CoreML-in-ARKit/PointCloud/SceneDepthPointCloud-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -370,7 +370,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = TestMLMin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "CoreML-in-ARKit/PointCloud/SceneDepthPointCloud-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

@@ -183,7 +183,7 @@ class ViewController: UIViewController {
         
         // raycast to any mesh
         guard let raycastQuery = sceneView.raycastQuery(from: point,
-                                                        allowing: .existingPlaneInfinite,
+                                                        allowing: .estimatedPlane,
                                                         alignment: .any),
               let raycastResult = sceneView.session.raycast(raycastQuery).first else { return }
         
@@ -270,16 +270,8 @@ class ViewController: UIViewController {
     }
     
     func calculatePixelToWorld(point: CGPoint) {
-        // raycast to any mesh
-//        let depthPixelBuffer = sceneView.session.currentFrame?.capturedDepthData?.depthDataMap
-        let depthPixelBuffer = sceneView.session.currentFrame?.smoothedSceneDepth?.depthMap
-//        print(depthPixelBuffer)
-        //        depthPixelBuffer
-//        frame.getDistance
-        
-        
         guard let raycastQuery = sceneView.raycastQuery(from: point,
-                                                        allowing: .existingPlaneInfinite,
+                                                        allowing: .estimatedPlane,
                                                         alignment: .any),
               let raycastResult = sceneView.session.raycast(raycastQuery).first else { return }
         
