@@ -22,6 +22,7 @@ class ViewController: UIViewController {
     
     var handPixelX: Float?
     var handPixelY: Float?
+    var handWorldPosition: SCNVector3?
     
     var handler: VNImageRequestHandler?
     
@@ -162,7 +163,7 @@ class ViewController: UIViewController {
                 }
                 
             case .failure(let error):
-//                print(error)
+                print(error)
                 break
             }
         }
@@ -174,12 +175,6 @@ class ViewController: UIViewController {
         let scnHitTestResults = sceneView.hitTest(point,
                                                   options: [SCNHitTestOption.searchMode: SCNHitTestSearchMode.all.rawValue])
         guard !scnHitTestResults.contains(where: { $0.node.name == BubbleNode.name }) else { return }
-        
-        // raycast to flat surface
-//        guard let raycastQuery = sceneView.raycastQuery(from: point,
-//                                                        allowing: .existingPlaneInfinite,
-//                                                        alignment: .horizontal),
-//              let raycastResult = sceneView.session.raycast(raycastQuery).first else { return }
         
         // raycast to any mesh
         guard let raycastQuery = sceneView.raycastQuery(from: point,
@@ -195,7 +190,7 @@ class ViewController: UIViewController {
         let distance = (position - cameraPosition).length()
         guard distance <= 0.75 else { return }
         
-        let bubbleNode = BubbleNode(text: text)
+        let bubbleNode = BubbleNode(text: text, color: UIColor.cyan)
         bubbleNode.worldPosition = position
         
         sceneView.prepare([bubbleNode]) { [weak self] success in
@@ -211,32 +206,19 @@ class ViewController: UIViewController {
     
     // MARK: - Guide Phase
     func performGuidance() {    
-        self.detectHand()
-        
-        //Hand pose: thumbTip and indexTip were calculated by ARSession delegate
-        guard let thumbTipX = self.thumbTip?.x,
-              let thumbTipY = self.thumbTip?.y
-        else { return }
-        
-        self.handPixelX = Float(thumbTipX)
-        self.handPixelY = Float(thumbTipY)
-        
-        self.handPixelX = self.handPixelX! * Float(sceneView.bounds.height)
-        self.handPixelY = self.handPixelY! * Float(sceneView.bounds.width)
-        
-        let handPixelXInt = Int(self.handPixelX!)
-        let handPixelYInt = Int(self.handPixelY!)
-        let handPoint = CGPoint(x: handPixelYInt, y: handPixelXInt) // X and Y are mixed up..
-        self.calculatePixelToWorld(point: handPoint)
-        
-        //End Hand pose
+        self.detectAndLocalizeHand()
         
         guard let cameraPosition = self.sceneView.pointOfView?.position else { return }
         self.currentCameraPosition = cameraPosition
         
-        let distance = (cameraPosition - self.targetPosition!).length()
+        // Distance based on the Camera Position
+//        let distance = (cameraPosition - self.targetPosition!).length()
         
-        if (distance < 0.25) {   // target object 30 cm away from the camera
+        // Distance based on the Hand Position
+        guard let handWorldPosition = self.handWorldPosition else {return}
+        let distance = (handWorldPosition - self.targetPosition!).length()
+        
+        if (distance < 0.1) {   // target object 10 cm away from the camera
             self.currentPhase = .complete
             return
         }
@@ -269,7 +251,46 @@ class ViewController: UIViewController {
         self.lastCameraPosition = self.currentCameraPosition
     }
     
-    func calculatePixelToWorld(point: CGPoint) {
+    func detectAndLocalizeHand() {
+        do {
+            // Perform VNDetectHumanHandPoseRequest
+            try self.handler!.perform([handPoseRequest])
+            // Continue only when a hand was detected in the frame.
+            // Since we set the maximumHandCount property of the request to 1, there will be at most one observation.
+            guard let observation = handPoseRequest.results?.first else {
+                return
+            }
+            
+            // Get points for thumb and index finger.
+            let thumbPoints = try observation.recognizedPoints(.thumb)
+            let indexFingerPoints = try observation.recognizedPoints(.indexFinger)
+            
+            // Look for tip points.
+            guard let thumbTipPoint = thumbPoints[.thumbTip], let indexTipPoint = indexFingerPoints[.indexTip] else {
+                return
+            }
+            
+            // Ignore low confidence points.
+            guard thumbTipPoint.confidence > 0.5 && indexTipPoint.confidence > 0.5 else {
+                return
+            }
+            
+            thumbTip = CGPoint(x: thumbTipPoint.location.x, y: thumbTipPoint.location.y)
+//            indexTip = CGPoint(x: indexTipPoint.location.x, y: indexTipPoint.location.y)
+            
+            self.handPixelX = Float(thumbTip!.x) * Float(sceneView.bounds.height)
+            self.handPixelY = Float(thumbTip!.y) * Float(sceneView.bounds.width)
+    
+            let handPixelXInt = Int(self.handPixelX!)
+            let handPixelYInt = Int(self.handPixelY!)
+            let handPoint = CGPoint(x: handPixelYInt, y: handPixelXInt) // X and Y are mixed up..
+            self.localizeHand(point: handPoint)
+        } catch {
+            
+        }
+    }
+    
+    func localizeHand(point: CGPoint) {
         guard let raycastQuery = sceneView.raycastQuery(from: point,
                                                         allowing: .estimatedPlane,
                                                         alignment: .any),
@@ -279,8 +300,9 @@ class ViewController: UIViewController {
                                   raycastResult.worldTransform.columns.3.y,
                                   raycastResult.worldTransform.columns.3.z)
         
-        let bubbleNode = BubbleNode(text: ".")
+        let bubbleNode = BubbleNode(text: "", color: UIColor.magenta)
         bubbleNode.worldPosition = position
+        self.handWorldPosition = position
         
         sceneView.prepare([bubbleNode]) { [weak self] success in
             if success {
@@ -290,7 +312,6 @@ class ViewController: UIViewController {
         }
         
     }
-    
     
     func calculatePixelValues() -> simd_float4 {
         let targetPosition4 = simd_float4(self.targetPosition!.x, self.targetPosition!.y, self.targetPosition!.z, 1)
@@ -420,33 +441,6 @@ extension ViewController: ARSessionDelegate {
         
     }
     
-    func detectHand() {
-        do {
-            // Perform VNDetectHumanHandPoseRequest
-            try self.handler!.perform([handPoseRequest])
-            // Continue only when a hand was detected in the frame.
-            // Since we set the maximumHandCount property of the request to 1, there will be at most one observation.
-            guard let observation = handPoseRequest.results?.first else {
-                return
-            }
-            // Get points for thumb and index finger.
-            let thumbPoints = try observation.recognizedPoints(.thumb)
-            let indexFingerPoints = try observation.recognizedPoints(.indexFinger)
-            // Look for tip points.
-            guard let thumbTipPoint = thumbPoints[.thumbTip], let indexTipPoint = indexFingerPoints[.indexTip] else {
-                return
-            }
-            // Ignore low confidence points.
-            guard thumbTipPoint.confidence > 0.3 && indexTipPoint.confidence > 0.3 else {
-                return
-            }
-            // Convert points from Vision coordinates to AVFoundation coordinates.
-            thumbTip = CGPoint(x: thumbTipPoint.location.x, y: thumbTipPoint.location.y)
-            indexTip = CGPoint(x: indexTipPoint.location.x, y: indexTipPoint.location.y)
-        } catch {
-            
-        }
-    }
     
     // MARK: - ARSessionObserver
     

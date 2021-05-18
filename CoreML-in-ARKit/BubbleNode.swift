@@ -14,7 +14,7 @@ class BubbleNode: SCNNode {
     let bubbleDepth: CGFloat = 0.025      // default 0.1
     let hiddenGeometry = SCNSphere(radius: 0.15)
     
-    init(text: String) {
+    init(text: String, color: UIColor) {
         super.init()
         
         let billboardConstraint = SCNBillboardConstraint()
@@ -43,7 +43,7 @@ class BubbleNode: SCNNode {
         
         // CENTRE POINT NODE
         let sphere = SCNSphere(radius: 0.005)
-        sphere.firstMaterial?.diffuse.contents = UIColor.cyan
+        sphere.firstMaterial?.diffuse.contents = color
         let sphereNode = SCNNode(geometry: sphere)
         
         let searchNode = SCNNode(geometry: hiddenGeometry)
