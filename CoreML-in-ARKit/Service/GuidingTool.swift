@@ -39,11 +39,11 @@ class GuidingTool {
     func checkTargetDirection(pixelValues: simd_float4) -> targetDirection {
         if ((pixelValues.x >= 0.2) && (pixelValues.x <= 0.8) && (pixelValues.y >= 0.1) && (pixelValues.y <= 0.9)) {
             return .onScreen
-        } else if (pixelValues.x < 0.2) {
+        } else if (pixelValues.x < 0.35) {
             return .goLeft
-        } else if (pixelValues.x > 0.8) {
+        } else if (pixelValues.x > 0.65) {
             return .goRight
-        } else if (pixelValues.y < 0.2) {
+        } else if (pixelValues.y < 0.3) {
             return .goDown
         } else {
             return .goUp

@@ -23,6 +23,7 @@ class ViewController: UIViewController {
     var handPixelX: Float?
     var handPixelY: Float?
     var handWorldPosition: SCNVector3?
+    var lastHandWorldPosition: SCNVector3?
     
     var handler: VNImageRequestHandler?
     
@@ -117,6 +118,8 @@ class ViewController: UIViewController {
             case .scanning:
                 
                 message = "Scanning: \(self.targetObject)"
+//                self.textToSpeach(message: message, wait: true)  // annoying!
+                AudioServicesPlayAlertSound(1521)   // short
                 self.updateMessage(message: message)
                 
                 if self.isLoopShouldContinue {
@@ -144,7 +147,6 @@ class ViewController: UIViewController {
     func performDetection() {
         let currentFramePoints = (sceneView.session.currentFrame?.rawFeaturePoints?.points)!
         scenePointCloud.append(contentsOf: currentFramePoints)
-        print(currentFramePoints.count, scenePointCloud.count)
         
         guard let pixelBuffer = sceneView.session.currentFrame?.capturedImage else { return }
         
@@ -198,7 +200,7 @@ class ViewController: UIViewController {
                 self?.sceneView.scene.rootNode.addChildNode(bubbleNode)
                 
                 self?.targetPosition = position
-                self?.textToSpeach(message: "Scanning Complete.", wait: true )
+                self?.textToSpeach(message: "Scanning Complete.", wait: false)
                 self?.currentPhase = .guiding
             }
         }
@@ -218,7 +220,7 @@ class ViewController: UIViewController {
         guard let handWorldPosition = self.handWorldPosition else {return}
         let distance = (handWorldPosition - self.targetPosition!).length()
         
-        if (distance < 0.1) {   // target object 10 cm away from the camera
+        if (distance < 0.15) {   // target object 15 cm away from the camera
             self.currentPhase = .complete
             return
         }
@@ -258,6 +260,8 @@ class ViewController: UIViewController {
             // Continue only when a hand was detected in the frame.
             // Since we set the maximumHandCount property of the request to 1, there will be at most one observation.
             guard let observation = handPoseRequest.results?.first else {
+                self.updateMessage(message: "Hand not on screen")
+                self.textToSpeach(message: "No Hand", wait: false )
                 return
             }
             
@@ -286,7 +290,6 @@ class ViewController: UIViewController {
             let handPoint = CGPoint(x: handPixelYInt, y: handPixelXInt) // X and Y are mixed up..
             self.localizeHand(point: handPoint)
         } catch {
-            
         }
     }
     
@@ -307,7 +310,6 @@ class ViewController: UIViewController {
         sceneView.prepare([bubbleNode]) { [weak self] success in
             if success {
                 self?.sceneView.scene.rootNode.addChildNode(bubbleNode)
-//                self?.sceneView.scene.rootNode.replaceChildNode(bubbleNode, with: bubbleNode)
             }
         }
         
@@ -337,7 +339,7 @@ class ViewController: UIViewController {
             isProcessComplete = true
             let message = """
                             Process Complete.
-                            \(self.targetObject) in front of the camera.
+                            \(self.targetObject) in front of the hand.
                             """
             textToSpeach(message: message, wait: false)
             self.updateMessage(message: message)
@@ -358,6 +360,7 @@ class ViewController: UIViewController {
         } else {
             self.speechSynthesizer.speak(utterance)
         }
+        
     }
     
     func updateMessage(message: String) {
@@ -390,6 +393,8 @@ class ViewController: UIViewController {
             message = "Tracking limited - Point the device at an area with visible surface detail, or improve lighting conditions."
             
         case .limited(.initializing):
+            self.textToSpeach(message: "Looking for \(self.targetObject)", wait: true )
+            self.textToSpeach(message: "Start Scanning.", wait: true )
             message = "Initializing AR session."
             
         default:
@@ -397,8 +402,6 @@ class ViewController: UIViewController {
             // (Nor when in unreachable limited-tracking states.)
             message = ""
             isLoopShouldContinue = true
-            self.textToSpeach(message: "Looking for \(self.targetObject)", wait: true )
-            self.textToSpeach(message: "Start Scanning.", wait: true )
             loopProcess()
             
         }
