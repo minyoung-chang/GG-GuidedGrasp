@@ -60,6 +60,10 @@ class ViewController: UIViewController {
     var thumbTip: CGPoint?
     var indexTip: CGPoint?
     
+    var middleTip: CGPoint?
+    var wristCenter: CGPoint?
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 //        checkPermissions()
@@ -268,14 +272,16 @@ class ViewController: UIViewController {
             // Get points for thumb and index finger.
             let thumbPoints = try observation.recognizedPoints(.thumb)
             let indexFingerPoints = try observation.recognizedPoints(.indexFinger)
+            let middleFingerPoints = try observation.recognizedPoints(.middleFinger)
+            let wristPoints = try observation.recognizedPoints(.all)
             
             // Look for tip points.
-            guard let thumbTipPoint = thumbPoints[.thumbTip], let indexTipPoint = indexFingerPoints[.indexTip] else {
+            guard let thumbTipPoint = thumbPoints[.thumbTip], let indexTipPoint = indexFingerPoints[.indexTip], let middleTipPoint = middleFingerPoints[.middleTip], let wristPoint = wristPoints[.wrist] else {
                 return
             }
             
             // Ignore low confidence points.
-            guard thumbTipPoint.confidence > 0.5 && indexTipPoint.confidence > 0.5 else {
+            guard thumbTipPoint.confidence > 0.5 && indexTipPoint.confidence > 0.5 && middleTipPoint.confidence > 0.5 && wristPoint.confidence > 0.5 else {
                 return
             }
             
