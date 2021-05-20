@@ -284,13 +284,13 @@ class ViewController: UIViewController {
             guard thumbTipPoint.confidence > 0.5 && indexTipPoint.confidence > 0.5 && middleTipPoint.confidence > 0.5 && wristPoint.confidence > 0.5 else {
                 return
             }
+        
+            middleTip = CGPoint(x: middleTipPoint.location.x, y: middleTipPoint.location.y)
+            wristCenter = CGPoint(x: wristPoint.location.x, y: wristPoint.location.y)
             
-            thumbTip = CGPoint(x: thumbTipPoint.location.x, y: thumbTipPoint.location.y)
-//            indexTip = CGPoint(x: indexTipPoint.location.x, y: indexTipPoint.location.y)
+            self.handPixelX = ((Float(wristCenter!.x) + Float(middleTip!.x)) / 2) * Float(sceneView.bounds.height)
+            self.handPixelY = ((Float(wristCenter!.y) + Float(middleTip!.y)) / 2) * Float(sceneView.bounds.width)
             
-            self.handPixelX = Float(thumbTip!.x) * Float(sceneView.bounds.height)
-            self.handPixelY = Float(thumbTip!.y) * Float(sceneView.bounds.width)
-    
             let handPixelXInt = Int(self.handPixelX!)
             let handPixelYInt = Int(self.handPixelY!)
             let handPoint = CGPoint(x: handPixelYInt, y: handPixelXInt) // X and Y are mixed up..
