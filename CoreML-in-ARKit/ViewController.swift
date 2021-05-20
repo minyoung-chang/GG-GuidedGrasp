@@ -25,6 +25,7 @@ class ViewController: UIViewController {
     var handWorldPosition: SCNVector3?
     var noHandCount = 5           // to prevent speaking too often while looking for hand
     var handDetectionCount = 0.0   // number of detection to register hand position
+    var handRegistered = false
     
     var handler: VNImageRequestHandler?
     
@@ -260,7 +261,12 @@ class ViewController: UIViewController {
             // Continue only when a hand was detected in the frame.
             // Since we set the maximumHandCount property of the request to 1, there will be at most one observation.
             guard let observation = handPoseRequest.results?.first else {
-                self.updateMessage(message: "Hand not on screen")
+                self.updateMessage(message: "Hand not on the screen")
+                
+                if !self.handRegistered {
+                    self.handDetectionCount = 0
+                }
+                
                 if self.noHandCount == 0 {
                     self.textToSpeach(message: "Show your hand", wait: false)
                     AudioServicesPlayAlertSound(kSystemSoundID_Vibrate) // long
@@ -277,7 +283,7 @@ class ViewController: UIViewController {
                 return
             }
             
-            if self.handDetectionCount < 5.0 {
+            if self.handDetectionCount < 5.0 && !self.handRegistered {
                 if self.handDetectionCount == 0.0 {
                     self.textToSpeach(message: "Registering Hand", wait: false)
                 }
@@ -291,6 +297,7 @@ class ViewController: UIViewController {
                 self.handDetectionCount += 1.0
                 self.textToSpeach(message: "Registration Complete. Start Moving.", wait: false)
                 self.noHandCount = 0
+                self.handRegistered = true
             }
             
             // Get points for thumb and index finger.
