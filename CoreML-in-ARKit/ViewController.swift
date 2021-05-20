@@ -23,7 +23,8 @@ class ViewController: UIViewController {
     var handPixelX: Float?
     var handPixelY: Float?
     var handWorldPosition: SCNVector3?
-    var lastHandWorldPosition: SCNVector3?
+    var noHandCount = 5           // to prevent speaking too often while looking for hand
+    var handDetectionCount = 0.0   // number of detection to register hand position
     
     var handler: VNImageRequestHandler?
     
@@ -121,7 +122,7 @@ class ViewController: UIViewController {
             switch self.currentPhase {
             case .scanning:
                 
-                message = "Scanning: \(self.targetObject)"
+                message = "Scanning: \(self.targetObject)\n \(self.scenePointCloud.count) points collected"
 //                self.textToSpeach(message: message, wait: true)  // annoying!
                 AudioServicesPlayAlertSound(1521)   // short
                 self.updateMessage(message: message)
@@ -217,9 +218,6 @@ class ViewController: UIViewController {
         guard let cameraPosition = self.sceneView.pointOfView?.position else { return }
         self.currentCameraPosition = cameraPosition
         
-        // Distance based on the Camera Position
-//        let distance = (cameraPosition - self.targetPosition!).length()
-        
         // Distance based on the Hand Position
         guard let handWorldPosition = self.handWorldPosition else {return}
         let distance = (handWorldPosition - self.targetPosition!).length()
@@ -235,12 +233,10 @@ class ViewController: UIViewController {
         
         switch targetDirection {
         case .onScreen:
-            if distance < 0.45 {
+            if distance < 0.35 {
                 AudioServicesPlayAlertSound(1521)   // short
-            } else if distance < 0.65 {
+            } else if distance < 0.75 {
                 AudioServicesPlayAlertSound(1520)   // medium
-            } else {
-                AudioServicesPlayAlertSound(kSystemSoundID_Vibrate) // long
             }
             
         case .goUp:
@@ -265,8 +261,36 @@ class ViewController: UIViewController {
             // Since we set the maximumHandCount property of the request to 1, there will be at most one observation.
             guard let observation = handPoseRequest.results?.first else {
                 self.updateMessage(message: "Hand not on screen")
-                self.textToSpeach(message: "No Hand", wait: false )
+                if self.noHandCount == 0 {
+                    self.textToSpeach(message: "Show your hand", wait: false)
+                    AudioServicesPlayAlertSound(kSystemSoundID_Vibrate) // long
+                    self.noHandCount += 1
+                } else {
+                    AudioServicesPlayAlertSound(kSystemSoundID_Vibrate) // long
+                    self.noHandCount += 1
+                    
+                    if self.noHandCount > 5 {
+                        self.noHandCount = 0
+                    }
+                }
+                
                 return
+            }
+            
+            if self.handDetectionCount < 5.0 {
+                if self.handDetectionCount == 0.0 {
+                    self.textToSpeach(message: "Registering Hand", wait: false)
+                }
+                self.handDetectionCount += 1.0
+                self.updateMessage(message: "Registering Hand \((self.handDetectionCount / 5.0)*100) %")
+                AudioServicesPlayAlertSound(1521)   // short
+                return
+            }
+            
+            if self.handDetectionCount == 5.0 {
+                self.handDetectionCount += 1.0
+                self.textToSpeach(message: "Registration Complete. Start Moving.", wait: false)
+                self.noHandCount = 0
             }
             
             // Get points for thumb and index finger.
