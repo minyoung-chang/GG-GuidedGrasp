@@ -14,11 +14,16 @@ import Vision
 import ARKit
 import AVFoundation
 import Speech
+import KDTree
 
-// MARK: Set up
+// MARK: - Set up
 //class ViewController: UIViewController, MTKViewDelegate {
 class ViewController: UIViewController {
-    var scenePointCloud: Array<vector_float3> = Array()
+    
+    let targetObject = "cup"
+    
+    var scenePointCloud: Array<Point3D> = Array()
+    let collisionChecker = CollisionChecker()
     
     var handPixelX: Float?
     var handPixelY: Float?
@@ -52,7 +57,6 @@ class ViewController: UIViewController {
     }
     
     var currentPhase: phaseType?
-    let targetObject = "cup"
     
     @IBOutlet var sceneView: ARSCNView!
     @IBOutlet weak var sessionInfoLabel: UILabel!
@@ -68,8 +72,6 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        checkPermissions()
-        
         sceneView.delegate = self
         sceneView.session.delegate = self
         sceneView.scene = SCNScene()
@@ -152,7 +154,14 @@ class ViewController: UIViewController {
     // MARK: - Detecting Phase
     func performDetection() {
         let currentFramePoints = (sceneView.session.currentFrame?.rawFeaturePoints?.points)!
-        scenePointCloud.append(contentsOf: currentFramePoints)
+        
+        for point in currentFramePoints {
+            let kdPoint = Point3D(point[0], point[1], point[2])
+            scenePointCloud.append(kdPoint)
+        }
+        
+//        scenePointCloud.append(contentsOf: currentFramePoints)
+        
         
         guard let pixelBuffer = sceneView.session.currentFrame?.capturedImage else { return }
         
@@ -228,6 +237,15 @@ class ViewController: UIViewController {
             return
         }
         
+        let handWorldPositionPoint3D = Point3D(handWorldPosition.x, handWorldPosition.y, handWorldPosition.z)
+        
+        let willCollide = collisionChecker.checkCollision(map: self.scenePointCloud, at: handWorldPositionPoint3D)
+        
+        if willCollide {
+            self.updateMessage(message: "CAUTION!")
+            return
+        }
+        
         let pixelValues = calculatePixelValues()
         let targetDirection = guidingTool.checkTargetDirection(pixelValues: pixelValues)
         let message = guidingTool.getDirectionMessage(targetDirection: targetDirection, distance: distance)
@@ -254,6 +272,7 @@ class ViewController: UIViewController {
         self.lastCameraPosition = self.currentCameraPosition
     }
     
+    // MARK: - Guide Phase - Hand Localization
     func detectAndLocalizeHand() {
         do {
             // Perform VNDetectHumanHandPoseRequest
@@ -279,7 +298,6 @@ class ViewController: UIViewController {
                         self.noHandCount = 0
                     }
                 }
-                
                 return
             }
             
@@ -300,19 +318,16 @@ class ViewController: UIViewController {
                 self.handRegistered = true
             }
             
-            // Get points for thumb and index finger.
-            let thumbPoints = try observation.recognizedPoints(.thumb)
-            let indexFingerPoints = try observation.recognizedPoints(.indexFinger)
-            let middleFingerPoints = try observation.recognizedPoints(.middleFinger)
-            let wristPoints = try observation.recognizedPoints(.all)
-            
+            // Get points for the detected hand
+            let handPoints = try observation.recognizedPoints(.all)
+
             // Look for tip points.
-            guard let thumbTipPoint = thumbPoints[.thumbTip], let indexTipPoint = indexFingerPoints[.indexTip], let middleTipPoint = middleFingerPoints[.middleTip], let wristPoint = wristPoints[.wrist] else {
+            guard let middleTipPoint = handPoints[.middleTip], let wristPoint = handPoints[.wrist] else {
                 return
             }
             
             // Ignore low confidence points.
-            guard thumbTipPoint.confidence > 0.5 && indexTipPoint.confidence > 0.5 && middleTipPoint.confidence > 0.5 && wristPoint.confidence > 0.5 else {
+            guard middleTipPoint.confidence > 0.5 && wristPoint.confidence > 0.5 else {
                 return
             }
         
@@ -472,7 +487,7 @@ extension ViewController: ARSessionDelegate {
         
         if let lastLocation = lastLocation {
             let speed = (lastLocation - currentPositionOfCamera).length()
-            isLoopShouldContinue = speed < 0.0025   // default 0.0025
+            isLoopShouldContinue = speed < 0.005   // default 0.0025
         }
         lastLocation = currentPositionOfCamera
         

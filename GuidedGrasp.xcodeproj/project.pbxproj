@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -19,6 +19,8 @@
 		43E1469624D569BA009046C4 /* ObjectDetectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E1469524D569BA009046C4 /* ObjectDetectionService.swift */; };
 		43E1469924D56A85009046C4 /* UIDevice+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E1469824D56A85009046C4 /* UIDevice+Extension.swift */; };
 		8A066699263A468600441353 /* GuidingTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A066698263A468600441353 /* GuidingTool.swift */; };
+		8A8CA16B26575D6D00696132 /* CollisionChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8CA16A26575D6D00696132 /* CollisionChecker.swift */; };
+		8A8CA1732657601500696132 /* KDTree in Frameworks */ = {isa = PBXBuildFile; productRef = 8A8CA1722657601500696132 /* KDTree */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +38,7 @@
 		43E1469524D569BA009046C4 /* ObjectDetectionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectDetectionService.swift; sourceTree = "<group>"; };
 		43E1469824D56A85009046C4 /* UIDevice+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Extension.swift"; sourceTree = "<group>"; };
 		8A066698263A468600441353 /* GuidingTool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuidingTool.swift; sourceTree = "<group>"; };
+		8A8CA16A26575D6D00696132 /* CollisionChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollisionChecker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +46,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A8CA1732657601500696132 /* KDTree in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -110,6 +114,7 @@
 		43E1469A24D56B6C009046C4 /* Service */ = {
 			isa = PBXGroup;
 			children = (
+				8A8CA16A26575D6D00696132 /* CollisionChecker.swift */,
 				8A066698263A468600441353 /* GuidingTool.swift */,
 				43E1469524D569BA009046C4 /* ObjectDetectionService.swift */,
 				43220AA024D5B25500DD4168 /* Throttler.swift */,
@@ -133,6 +138,9 @@
 			dependencies = (
 			);
 			name = GuidedGrasp;
+			packageProductDependencies = (
+				8A8CA1722657601500696132 /* KDTree */,
+			);
 			productName = "CoreML-in-ARKit";
 			productReference = 43221F9F24D56328005A637E /* GuidedGrasp.app */;
 			productType = "com.apple.product-type.application";
@@ -144,7 +152,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1150;
-				LastUpgradeCheck = 1150;
+				LastUpgradeCheck = 1240;
 				ORGANIZATIONNAME = "Yehor Chernenko";
 				TargetAttributes = {
 					43221F9E24D56328005A637E = {
@@ -161,6 +169,9 @@
 				Base,
 			);
 			mainGroup = 43221F9624D56328005A637E;
+			packageReferences = (
+				8A8CA1712657601500696132 /* XCRemoteSwiftPackageReference "KDTree" */,
+			);
 			productRefGroup = 43221FA024D56328005A637E /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -194,6 +205,7 @@
 				43220AA124D5B25500DD4168 /* Throttler.swift in Sources */,
 				43220A9924D59C1B00DD4168 /* BubbleNode.swift in Sources */,
 				43220A9D24D5A0C100DD4168 /* YOLOv3Int8LUT.mlmodel in Sources */,
+				8A8CA16B26575D6D00696132 /* CollisionChecker.swift in Sources */,
 				43E1469624D569BA009046C4 /* ObjectDetectionService.swift in Sources */,
 				8A066699263A468600441353 /* GuidingTool.swift in Sources */,
 				43221FA324D56328005A637E /* AppDelegate.swift in Sources */,
@@ -248,6 +260,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -308,6 +321,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -398,6 +412,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		8A8CA1712657601500696132 /* XCRemoteSwiftPackageReference "KDTree" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Bersaelor/KDTree";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.4.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		8A8CA1722657601500696132 /* KDTree */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8A8CA1712657601500696132 /* XCRemoteSwiftPackageReference "KDTree" */;
+			productName = KDTree;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 43221F9724D56328005A637E /* Project object */;
 }

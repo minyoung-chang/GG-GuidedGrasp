@@ -50,7 +50,7 @@ private extension ObjectDetectionService {
             return
         }
         
-        guard let result = results.first(where: { $0.confidence > 0.8 }),
+        guard let result = results.first(where: { $0.confidence > 0.7 }),
             let classification = result.labels.first else {
                 complete(.failure(RecognitionError.lowConfidence))
                 return
