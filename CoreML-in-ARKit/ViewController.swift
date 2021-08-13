@@ -20,7 +20,7 @@ import KDTree
 //class ViewController: UIViewController, MTKViewDelegate {
 class ViewController: UIViewController {
     
-    let targetObject = "cup"
+    let targetObject = "bottle"
     
     var scenePointCloud: Array<Point3D> = Array()
     let collisionChecker = CollisionChecker()
@@ -175,8 +175,32 @@ class ViewController: UIViewController {
                     Int(self.sceneView.bounds.height))
                 
                 if (response.classification == self.targetObject) {
+                    
+                    
+                    // add AR Anchor on the object position
                     self.addAnnotation(rectOfInterest: rectOfInterest,
                                        text: response.classification)
+                    
+                    // Save Camera projection Matrix at this moment
+                    let projectionMatrix = self.sceneView.session.currentFrame?.camera.projectionMatrix
+                    let viewMatrix = self.sceneView.session.currentFrame?.camera.viewMatrix(for: UIInterfaceOrientation.portrait)
+                    let viewProjectionMatrix = matrix_multiply(projectionMatrix!, viewMatrix!)
+                    print(viewProjectionMatrix)
+                    
+                    // Save bounding box of the object at this moment
+                    let minX = Int(response.boundingBox.minX * self.sceneView.bounds.height) //bottom
+                    let maxX = Int(response.boundingBox.maxX * self.sceneView.bounds.height) //top
+                    
+                    let minY = Int(response.boundingBox.minY * self.sceneView.bounds.width)  // left
+                    let maxY = Int(response.boundingBox.maxY * self.sceneView.bounds.width)  // right
+
+                    let camDataStr = self.camData2String(minX: minX, maxX: maxX, minY: minY, maxY: maxY, projectionMatrix: viewProjectionMatrix)
+                    
+                    let pointCloudStr = self.pointCloud2Str(pointCloud: self.scenePointCloud)
+                    
+                    let activityViewController = UIActivityViewController(activityItems: [camDataStr, pointCloudStr], applicationActivities: nil)
+                    self.present(activityViewController, animated: true, completion: nil)
+                    
                 }
                 
             case .failure(let error):
@@ -219,6 +243,57 @@ class ViewController: UIViewController {
                 self?.currentPhase = .guiding
             }
         }
+    }
+    
+    func camData2String(minX: Int, maxX: Int, minY: Int, maxY: Int, projectionMatrix: simd_float4x4) -> String {
+        
+        var fileToWrite = ""
+        let boundingBox = "\(minX) \(maxX) \(minY) \(maxY)"
+        fileToWrite += "bottom top left right\n"
+        fileToWrite += boundingBox
+        fileToWrite += "\r\n"
+        fileToWrite += "Projection Matrix\n"
+        let col0 = projectionMatrix.columns.0
+        let col0_str = "\(col0[0]),\(col0[1]),\(col0[2]),\(col0[3]),"
+        let col1 = projectionMatrix.columns.1
+        let col1_str = "\(col1[0]),\(col1[1]),\(col1[2]),\(col1[3]),"
+        let col2 = projectionMatrix.columns.2
+        let col2_str = "\(col2[0]),\(col2[1]),\(col2[2]),\(col2[3]),"
+        let col3 = projectionMatrix.columns.3
+        let col3_str = "\(col3[0]),\(col3[1]),\(col3[2]),\(col3[3])"        // no "," at the end for the last column
+        fileToWrite += col0_str
+        fileToWrite += col1_str
+        fileToWrite += col2_str
+        fileToWrite += col3_str
+        
+        fileToWrite += "\r\n"
+        
+        return fileToWrite
+    }
+    
+    func pointCloud2Str(pointCloud: Array<Point3D>) -> String {
+        
+        // 1
+        var fileToWrite = ""
+        let headers = ["ply", "format ascii 1.0", "element vertex \(pointCloud.count)", "property float x", "property float y", "property float z", "end_header"]
+        for header in headers {
+            fileToWrite += header
+            fileToWrite += "\r\n"
+        }
+        
+        // 2
+        for i in 0..<pointCloud.count {
+        
+            // 3
+            let point = pointCloud[i]
+            
+            // 5
+            let pvValue = "\(point.x) \(point.y) \(point.z)"
+            fileToWrite += pvValue
+            fileToWrite += "\r\n"
+        }
+        
+        return fileToWrite
     }
     
     // MARK: - Guide Phase
