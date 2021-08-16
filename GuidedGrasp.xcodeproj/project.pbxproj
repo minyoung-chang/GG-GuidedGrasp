@@ -21,6 +21,7 @@
 		8A066699263A468600441353 /* GuidingTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A066698263A468600441353 /* GuidingTool.swift */; };
 		8A8CA16B26575D6D00696132 /* CollisionChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8CA16A26575D6D00696132 /* CollisionChecker.swift */; };
 		8A8CA1732657601500696132 /* KDTree in Frameworks */ = {isa = PBXBuildFile; productRef = 8A8CA1722657601500696132 /* KDTree */; };
+		F484A8FB26CA0FA400F2BE59 /* SpeechController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F484A8FA26CA0FA400F2BE59 /* SpeechController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,7 @@
 		43E1469824D56A85009046C4 /* UIDevice+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Extension.swift"; sourceTree = "<group>"; };
 		8A066698263A468600441353 /* GuidingTool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuidingTool.swift; sourceTree = "<group>"; };
 		8A8CA16A26575D6D00696132 /* CollisionChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollisionChecker.swift; sourceTree = "<group>"; };
+		F484A8FA26CA0FA400F2BE59 /* SpeechController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +88,7 @@
 				43221FA824D56328005A637E /* Main.storyboard */,
 				43221FA624D56328005A637E /* ViewController.swift */,
 				43220A9824D59C1B00DD4168 /* BubbleNode.swift */,
+				F484A8FA26CA0FA400F2BE59 /* SpeechController.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -204,6 +207,7 @@
 				43E1469924D56A85009046C4 /* UIDevice+Extension.swift in Sources */,
 				43220AA124D5B25500DD4168 /* Throttler.swift in Sources */,
 				43220A9924D59C1B00DD4168 /* BubbleNode.swift in Sources */,
+				F484A8FB26CA0FA400F2BE59 /* SpeechController.swift in Sources */,
 				43220A9D24D5A0C100DD4168 /* YOLOv3Int8LUT.mlmodel in Sources */,
 				8A8CA16B26575D6D00696132 /* CollisionChecker.swift in Sources */,
 				43E1469624D569BA009046C4 /* ObjectDetectionService.swift in Sources */,
