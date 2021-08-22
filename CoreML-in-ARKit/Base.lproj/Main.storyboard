@@ -8,21 +8,6 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Speech Controller-->
-        <scene sceneID="iRh-K1-THb">
-            <objects>
-                <viewController id="mBd-OC-l1J" customClass="SpeechController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="1Nf-AK-QKR">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="hzT-m3-sOi"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="ToI-xg-rlu" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-735" y="82"/>
-        </scene>
         <!--View Controller-->
         <scene sceneID="tXr-a1-R10">
             <objects>
@@ -55,6 +40,7 @@
                             <constraint firstItem="QWL-Lt-z4G" firstAttribute="centerY" secondItem="U0K-SW-4ec" secondAttribute="centerY" id="v1S-wQ-1rs"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="Wbs-f4-pNS"/>
                     <connections>
                         <outlet property="sceneView" destination="BrB-h1-WRS" id="5nT-qQ-ynl"/>
                         <outlet property="sessionInfoLabel" destination="QWL-Lt-z4G" id="RAm-8M-o9m"/>
@@ -63,6 +49,49 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="139" y="85"/>
+        </scene>
+        <!--Speech Controller-->
+        <scene sceneID="N33-Kb-E0K">
+            <objects>
+                <viewController id="hoP-w1-Ngc" customClass="SpeechController" customModule="GuidedGrasp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="4eZ-D4-rew">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VpB-pE-yAX">
+                                <rect key="frame" x="16" y="812" width="382" height="30"/>
+                                <state key="normal" title="Start Recording!"/>
+                                <connections>
+                                    <action selector="recordButtonTapped" destination="hoP-w1-Ngc" eventType="touchUpInside" id="wo8-Tz-Ley"/>
+                                </connections>
+                            </button>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="ayE-vZ-VUE">
+                                <rect key="frame" x="16" y="44" width="382" height="760"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="40"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="n2b-Bu-5EH"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="ayE-vZ-VUE" firstAttribute="top" secondItem="n2b-Bu-5EH" secondAttribute="top" id="3FG-1h-VhG"/>
+                            <constraint firstItem="n2b-Bu-5EH" firstAttribute="bottom" secondItem="VpB-pE-yAX" secondAttribute="bottom" constant="20" id="3XE-qS-Jc2"/>
+                            <constraint firstItem="n2b-Bu-5EH" firstAttribute="trailing" secondItem="ayE-vZ-VUE" secondAttribute="trailing" constant="16" id="Fx2-08-pDK"/>
+                            <constraint firstItem="n2b-Bu-5EH" firstAttribute="trailing" secondItem="VpB-pE-yAX" secondAttribute="trailing" constant="16" id="Qde-ZU-t4J"/>
+                            <constraint firstItem="ayE-vZ-VUE" firstAttribute="leading" secondItem="n2b-Bu-5EH" secondAttribute="leading" constant="16" id="Qnz-aR-dbG"/>
+                            <constraint firstItem="VpB-pE-yAX" firstAttribute="top" secondItem="ayE-vZ-VUE" secondAttribute="bottom" constant="8" id="nMJ-7N-fUK"/>
+                            <constraint firstItem="VpB-pE-yAX" firstAttribute="leading" secondItem="n2b-Bu-5EH" secondAttribute="leading" constant="16" id="yTa-g6-d5K"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="recordButton" destination="VpB-pE-yAX" id="h3j-7i-DYo"/>
+                        <outlet property="textView" destination="ayE-vZ-VUE" id="61y-NC-THg"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dh6-WE-ZwJ" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-725" y="84"/>
         </scene>
     </scenes>
     <resources>
