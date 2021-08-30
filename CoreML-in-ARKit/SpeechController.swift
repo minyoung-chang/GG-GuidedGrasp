@@ -99,6 +99,8 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
                 self.textView.text = result.bestTranscription.formattedString
                 isFinal = result.isFinal
                 print("Text \(result.bestTranscription.formattedString)")
+                
+                self.performSegue(withIdentifier: "speakword", sender: result.bestTranscription.formattedString)
             }
             
             if error != nil || isFinal {
@@ -137,6 +139,11 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
             recordButton.isEnabled = false
             recordButton.setTitle("Recognition Not Available", for: .disabled)
         }
+    }
+    
+    public override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let dst = segue.destination as! ViewController
+        dst.targetObject = sender as! String
     }
     
     // MARK: Interface Builder actions

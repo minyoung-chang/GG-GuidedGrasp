@@ -20,7 +20,7 @@ import KDTree
 //class ViewController: UIViewController, MTKViewDelegate {
 class ViewController: UIViewController {
     
-    let targetObject = "bottle"
+    var targetObject = "bottle"
     
     var scenePointCloud: Array<Point3D> = Array()
     let collisionChecker = CollisionChecker()
