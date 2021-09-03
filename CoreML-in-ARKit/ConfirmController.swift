@@ -1,14 +1,16 @@
-/*
-See LICENSE folder for this sample’s licensing information.
+//
+//  ConfirmController.swift
+//  GuidedGrasp
+//
+//  Created by Eric Pu Jing on 9/3/21.
+//  Copyright © 2021 Yehor Chernenko. All rights reserved.
+//
 
-Abstract:
-The root view controller that provides a button to start and stop recording, and which displays the speech recognition results.
-*/
 
 import UIKit
 import Speech
 
-public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
+public class ConfirmController: UIViewController, SFSpeechRecognizerDelegate {
     // MARK: Properties
     
     private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))!
@@ -20,6 +22,8 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
     private let audioEngine = AVAudioEngine()
     
     private let speechSynth = AVSpeechSynthesizer()
+    
+    var targetObject = "bottle"
     
     @IBOutlet var textView: UITextView!
     
@@ -38,7 +42,7 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
         super.viewDidAppear(animated)
         
         
-        speechSynth.speak(AVSpeechUtterance(string: "What are you looking for"))
+        speechSynth.speak(AVSpeechUtterance(string: targetObject))
         
         // Configure the SFSpeechRecognizer object already
         // stored in a local member variable.
@@ -106,7 +110,14 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
                 isFinal = result.isFinal
                 print("Text \(result.bestTranscription.formattedString)")
                 
-                self.performSegue(withIdentifier: "speakword", sender: result.bestTranscription.formattedString)
+                if result.bestTranscription.formattedString == "yes"{
+                    self.performSegue(withIdentifier: "accept", sender: self.targetObject)
+                }
+                else {
+                    self.performSegue(withIdentifier: "deny", sender: self.targetObject)
+                }
+                
+                
             }
             
             if error != nil || isFinal {
@@ -150,8 +161,10 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
     }
     
     public override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let dst = segue.destination as! ConfirmController
-        dst.targetObject = sender as! String
+        if let dst = segue.destination as? ViewController{
+            dst.targetObject = sender as! String
+        }
+        
     }
     
     // MARK: Interface Builder actions
@@ -172,4 +185,5 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
         }
     }
 }
+
 
