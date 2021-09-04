@@ -98,7 +98,7 @@
         <!--Confirm Controller-->
         <scene sceneID="P3J-Pn-pvM">
             <objects>
-                <viewController id="RVT-yz-uoq" customClass="ConfirmController" sceneMemberID="viewController">
+                <viewController id="RVT-yz-uoq" customClass="ConfirmController" customModule="GuidedGrasp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="O4y-Vg-EvH">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
