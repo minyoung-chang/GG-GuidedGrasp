@@ -88,7 +88,7 @@
                     <connections>
                         <outlet property="recordButton" destination="VpB-pE-yAX" id="h3j-7i-DYo"/>
                         <outlet property="textView" destination="ayE-vZ-VUE" id="61y-NC-THg"/>
-                        <segue destination="RVT-yz-uoq" kind="show" identifier="speakword" id="hy0-Op-0QC"/>
+                        <segue destination="RVT-yz-uoq" kind="showDetail" identifier="speakword" id="hy0-Op-0QC"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dh6-WE-ZwJ" sceneMemberID="firstResponder"/>
@@ -133,8 +133,8 @@
                     <connections>
                         <outlet property="recordButton" destination="1Gq-Ye-ZTc" id="qdC-l1-UpL"/>
                         <outlet property="textView" destination="Uo4-7r-sny" id="uH4-BZ-bvo"/>
-                        <segue destination="BV1-FR-VrT" kind="show" identifier="accept" id="3qz-hS-uUh"/>
-                        <segue destination="hoP-w1-Ngc" kind="show" identifier="deny" id="lcy-1l-QFW"/>
+                        <segue destination="BV1-FR-VrT" kind="showDetail" identifier="accept" id="3qz-hS-uUh"/>
+                        <segue destination="hoP-w1-Ngc" kind="showDetail" identifier="deny" id="lcy-1l-QFW"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="osU-q2-etA" sceneMemberID="firstResponder"/>
