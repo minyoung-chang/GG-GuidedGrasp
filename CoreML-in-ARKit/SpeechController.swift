@@ -106,7 +106,12 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
                 isFinal = result.isFinal
                 print("Text \(result.bestTranscription.formattedString)")
                 
-                self.performSegue(withIdentifier: "speakword", sender: result.bestTranscription.formattedString)
+                if result.bestTranscription.formattedString == "bottle"
+                    || result.bestTranscription.formattedString == "cup"{
+                    
+                    self.performSegue(withIdentifier: "speakword", sender: result.bestTranscription.formattedString)
+                }
+                
             }
             
             if error != nil || isFinal {
@@ -150,7 +155,7 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
     }
     
     public override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let dst = segue.destination as! ConfirmController
+        let dst = segue.destination as! ViewController
         dst.targetObject = sender as! String
     }
     
