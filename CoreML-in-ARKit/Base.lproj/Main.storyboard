@@ -55,18 +55,18 @@
             <objects>
                 <viewController id="hoP-w1-Ngc" customClass="SpeechController" customModule="GuidedGrasp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="4eZ-D4-rew">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VpB-pE-yAX">
-                                <rect key="frame" x="16" y="758" width="382" height="30"/>
+                                <rect key="frame" x="16" y="812" width="382" height="30"/>
                                 <state key="normal" title="Start Recording!"/>
                                 <connections>
                                     <action selector="recordButtonTapped" destination="hoP-w1-Ngc" eventType="touchUpInside" id="wo8-Tz-Ley"/>
                                 </connections>
                             </button>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="ayE-vZ-VUE">
-                                <rect key="frame" x="16" y="0.0" width="382" height="750"/>
+                                <rect key="frame" x="16" y="44" width="382" height="760"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="40"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -88,58 +88,12 @@
                     <connections>
                         <outlet property="recordButton" destination="VpB-pE-yAX" id="h3j-7i-DYo"/>
                         <outlet property="textView" destination="ayE-vZ-VUE" id="61y-NC-THg"/>
-                        <segue destination="RVT-yz-uoq" kind="showDetail" identifier="speakword" id="hy0-Op-0QC"/>
+                        <segue destination="BV1-FR-VrT" kind="showDetail" identifier="speakword" id="sDN-5d-toj"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dh6-WE-ZwJ" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1436" y="84"/>
-        </scene>
-        <!--Confirm Controller-->
-        <scene sceneID="P3J-Pn-pvM">
-            <objects>
-                <viewController id="RVT-yz-uoq" customClass="ConfirmController" customModule="GuidedGrasp" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="O4y-Vg-EvH">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Gq-Ye-ZTc">
-                                <rect key="frame" x="16" y="758" width="382" height="30"/>
-                                <state key="normal" title="Start Recording!"/>
-                                <connections>
-                                    <action selector="recordButtonTapped" destination="RVT-yz-uoq" eventType="touchUpInside" id="T9s-z9-zG6"/>
-                                </connections>
-                            </button>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="Uo4-7r-sny">
-                                <rect key="frame" x="16" y="0.0" width="382" height="750"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="40"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                            </textView>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="VHk-Z3-dzP"/>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <constraints>
-                            <constraint firstItem="Uo4-7r-sny" firstAttribute="leading" secondItem="VHk-Z3-dzP" secondAttribute="leading" constant="16" id="3GI-bI-0hu"/>
-                            <constraint firstItem="1Gq-Ye-ZTc" firstAttribute="top" secondItem="Uo4-7r-sny" secondAttribute="bottom" constant="8" id="C6b-TW-p64"/>
-                            <constraint firstItem="VHk-Z3-dzP" firstAttribute="bottom" secondItem="1Gq-Ye-ZTc" secondAttribute="bottom" constant="20" id="PXo-ck-UAe"/>
-                            <constraint firstItem="VHk-Z3-dzP" firstAttribute="trailing" secondItem="1Gq-Ye-ZTc" secondAttribute="trailing" constant="16" id="QfW-pZ-bW9"/>
-                            <constraint firstItem="1Gq-Ye-ZTc" firstAttribute="leading" secondItem="VHk-Z3-dzP" secondAttribute="leading" constant="16" id="QqB-QV-hDW"/>
-                            <constraint firstItem="VHk-Z3-dzP" firstAttribute="trailing" secondItem="Uo4-7r-sny" secondAttribute="trailing" constant="16" id="T2a-Lc-uUW"/>
-                            <constraint firstItem="Uo4-7r-sny" firstAttribute="top" secondItem="VHk-Z3-dzP" secondAttribute="top" id="lUz-Br-c8G"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" id="7nS-Ff-P9v"/>
-                    <connections>
-                        <outlet property="recordButton" destination="1Gq-Ye-ZTc" id="qdC-l1-UpL"/>
-                        <outlet property="textView" destination="Uo4-7r-sny" id="uH4-BZ-bvo"/>
-                        <segue destination="BV1-FR-VrT" kind="showDetail" identifier="accept" id="3qz-hS-uUh"/>
-                        <segue destination="hoP-w1-Ngc" kind="showDetail" identifier="deny" id="lcy-1l-QFW"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="osU-q2-etA" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-651" y="-651"/>
         </scene>
     </scenes>
     <resources>
