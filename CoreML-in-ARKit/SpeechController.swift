@@ -88,7 +88,7 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
         // Create and configure the speech recognition request.
         recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
         guard let recognitionRequest = recognitionRequest else { fatalError("Unable to create a SFSpeechAudioBufferRecognitionRequest object") }
-        recognitionRequest.shouldReportPartialResults = true
+        recognitionRequest.shouldReportPartialResults = false
         
         // Keep speech recognition data on device
         if #available(iOS 13, *) {
@@ -98,12 +98,10 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
         // Create a recognition task for the speech recognition session.
         // Keep a reference to the task so that it can be canceled.
         recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest) { result, error in
-            var isFinal = false
             
             if let result = result {
                 // Update the text view with the results.
                 self.textView.text = result.bestTranscription.formattedString
-                isFinal = result.isFinal
                 print("Text \(result.bestTranscription.formattedString)")
                 
                 if result.bestTranscription.formattedString.lowercased() == "bottle"
@@ -114,17 +112,17 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
                 
             }
             
-            if error != nil || isFinal {
-                // Stop recognizing speech if there is a problem.
-                self.audioEngine.stop()
-                inputNode.removeTap(onBus: 0)
+            
+            // Stop recognizing speech if there is a problem.
+            self.audioEngine.stop()
+            inputNode.removeTap(onBus: 0)
 
-                self.recognitionRequest = nil
-                self.recognitionTask = nil
+            self.recognitionRequest = nil
+            self.recognitionTask = nil
 
-                self.recordButton.isEnabled = true
-                self.recordButton.setTitle("Start Recording", for: [])
-            }
+            self.recordButton.isEnabled = true
+            self.recordButton.setTitle("Start Recording", for: [])
+            
         }
 
         // Configure the microphone input.
