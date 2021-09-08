@@ -106,8 +106,8 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
                 isFinal = result.isFinal
                 print("Text \(result.bestTranscription.formattedString)")
                 
-                if result.bestTranscription.formattedString == "bottle"
-                    || result.bestTranscription.formattedString == "cup"{
+                if result.bestTranscription.formattedString.lowercased() == "bottle"
+                    || result.bestTranscription.formattedString.lowercased() == "cup"{
                     
                     self.performSegue(withIdentifier: "speakword", sender: result.bestTranscription.formattedString)
                 }
