@@ -103,25 +103,29 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
                 // Update the text view with the results.
                 self.textView.text = result.bestTranscription.formattedString
                 print("Text \(result.bestTranscription.formattedString)")
-                
-                if result.bestTranscription.formattedString.lowercased() == "bottle"
-                    || result.bestTranscription.formattedString.lowercased() == "cup"{
-                    
-                    self.performSegue(withIdentifier: "speakword", sender: result.bestTranscription.formattedString)
+                for word in result.transcriptions {
+                    if word.formattedString.lowercased() == "bottle"
+                        || word.formattedString.lowercased() == "cup"{
+                        
+                        self.performSegue(withIdentifier: "speakword", sender: word.formattedString)
+                        
+                    }
                 }
                 
+                // Stop recognizing speech if there is a problem.
+                self.audioEngine.stop()
+                
+                inputNode.removeTap(onBus: 0)
+
+                self.recognitionRequest = nil
+                self.recognitionTask = nil
+
+                self.recordButton.isEnabled = true
+                self.recordButton.setTitle("Start Recording", for: [])
             }
             
             
-            // Stop recognizing speech if there is a problem.
-            self.audioEngine.stop()
-            inputNode.removeTap(onBus: 0)
-
-            self.recognitionRequest = nil
-            self.recognitionTask = nil
-
-            self.recordButton.isEnabled = true
-            self.recordButton.setTitle("Start Recording", for: [])
+            
             
         }
 
