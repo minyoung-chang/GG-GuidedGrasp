@@ -58,16 +58,15 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VpB-pE-yAX">
-                                <rect key="frame" x="16" y="44" width="382" height="798"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="28"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VpB-pE-yAX">
+                                <rect key="frame" x="16" y="52" width="382" height="790"/>
                                 <state key="normal" title="Start Recording!"/>
                                 <connections>
                                     <action selector="recordButtonTapped" destination="hoP-w1-Ngc" eventType="touchUpInside" id="wo8-Tz-Ley"/>
                                 </connections>
                             </button>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ayE-vZ-VUE">
-                                <rect key="frame" x="16" y="44" width="382" height="304"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ayE-vZ-VUE">
+                                <rect key="frame" x="16" y="44" width="382" height="146"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="40"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -81,7 +80,7 @@
                             <constraint firstItem="n2b-Bu-5EH" firstAttribute="trailing" secondItem="ayE-vZ-VUE" secondAttribute="trailing" constant="16" id="Fx2-08-pDK"/>
                             <constraint firstItem="n2b-Bu-5EH" firstAttribute="trailing" secondItem="VpB-pE-yAX" secondAttribute="trailing" constant="16" id="Qde-ZU-t4J"/>
                             <constraint firstItem="ayE-vZ-VUE" firstAttribute="leading" secondItem="n2b-Bu-5EH" secondAttribute="leading" constant="16" id="Qnz-aR-dbG"/>
-                            <constraint firstItem="VpB-pE-yAX" firstAttribute="top" secondItem="ayE-vZ-VUE" secondAttribute="bottom" constant="8" id="nMJ-7N-fUK"/>
+                            <constraint firstItem="VpB-pE-yAX" firstAttribute="top" secondItem="n2b-Bu-5EH" secondAttribute="top" constant="8" id="nMJ-7N-fUK"/>
                             <constraint firstItem="VpB-pE-yAX" firstAttribute="leading" secondItem="n2b-Bu-5EH" secondAttribute="leading" constant="16" id="yTa-g6-d5K"/>
                         </constraints>
                     </view>
