@@ -174,32 +174,53 @@ class ViewController: UIViewController {
                     Int(self.sceneView.bounds.width),
                     Int(self.sceneView.bounds.height))
                 
-                if (response.classification == self.targetObject) {
-                    
-                    
+                if (response.classification.lowercased() == self.targetObject.lowercased()) {
                     // add AR Anchor on the object position
                     self.addAnnotation(rectOfInterest: rectOfInterest,
                                        text: response.classification)
                     
                     // Save Camera projection Matrix at this moment
-                    let projectionMatrix = self.sceneView.session.currentFrame?.camera.projectionMatrix
-                    let viewMatrix = self.sceneView.session.currentFrame?.camera.viewMatrix(for: UIInterfaceOrientation.portrait)
-                    let viewProjectionMatrix = matrix_multiply(projectionMatrix!, viewMatrix!)
-                    print(viewProjectionMatrix)
+//                    let projectionMatrix = self.sceneView.session.currentFrame?.camera.projectionMatrix
+//                    let viewMatrix = self.sceneView.session.currentFrame?.camera.viewMatrix(for: UIInterfaceOrientation.portrait)
+//                    let viewProjectionMatrix = matrix_multiply(projectionMatrix!, viewMatrix!)
+////
+//                    // Save bounding box of the object at this moment
+//                    let minX = Int(response.boundingBox.minX * self.sceneView.bounds.height) //bottom
+//                    let maxX = Int(response.boundingBox.maxX * self.sceneView.bounds.height) //top
+//
+//                    let minY = Int(response.boundingBox.minY * self.sceneView.bounds.width)  // left
+//                    let maxY = Int(response.boundingBox.maxY * self.sceneView.bounds.width)  // right
                     
-                    // Save bounding box of the object at this moment
-                    let minX = Int(response.boundingBox.minX * self.sceneView.bounds.height) //bottom
-                    let maxX = Int(response.boundingBox.maxX * self.sceneView.bounds.height) //top
+//                    let camDataStr = self.camData2String(minX: minX, maxX: maxX, minY: minY, maxY: maxY, projectionMatrix: viewProjectionMatrix)
+//                    let pointCloudStr = self.pointCloud2Str(pointCloud: self.scenePointCloud)
                     
-                    let minY = Int(response.boundingBox.minY * self.sceneView.bounds.width)  // left
-                    let maxY = Int(response.boundingBox.maxY * self.sceneView.bounds.width)  // right
+                    self.addFeaturePoints(pointCloud: self.scenePointCloud)
+//                    let depthMap = self.sceneView.session.currentFrame?.sceneDepth?.depthMap
+//                    var depthMapFloatArray: Array<[Float16]> = Array()
+//
+//                    if let depth = depthMap{
+//                        let depthWidth = CVPixelBufferGetWidth(depth)
+//                        let depthHeight = CVPixelBufferGetHeight(depth)
+//                        CVPixelBufferLockBaseAddress(depth, CVPixelBufferLockFlags(rawValue: 0))
+//
+//                        let floatBuffer = unsafeBitCast(CVPixelBufferGetBaseAddress(depth), to: UnsafeMutablePointer<Float>.self)
+//                        for y in 0...depthHeight-1{
+//                            var distancesLine = [Float16]()
+//                            for x in 0...depthWidth-1{
+//                                let distanceAtXYPoint = floatBuffer[y * depthWidth + x]
+//                                distancesLine.append(Float16(distanceAtXYPoint))
+//                            }
+//                            depthMapFloatArray.append(distancesLine)
+//                            print(distancesLine)
+//                        }
+//                        CVPixelBufferUnlockBaseAddress(depth, CVPixelBufferLockFlags(rawValue: 0))
+//                    }
+//
 
-                    let camDataStr = self.camData2String(minX: minX, maxX: maxX, minY: minY, maxY: maxY, projectionMatrix: viewProjectionMatrix)
+//                    print("--##--")
                     
-                    let pointCloudStr = self.pointCloud2Str(pointCloud: self.scenePointCloud)
-                    
-                    let activityViewController = UIActivityViewController(activityItems: [camDataStr, pointCloudStr], applicationActivities: nil)
-                    self.present(activityViewController, animated: true, completion: nil)
+//                    let activityViewController = UIActivityViewController(activityItems: [camDataStr, pointCloudStr], applicationActivities: nil)
+//                    self.present(activityViewController, animated: true, completion: nil)
                     
                 }
                 
@@ -211,6 +232,7 @@ class ViewController: UIViewController {
     }
     
     func addAnnotation(rectOfInterest rect: CGRect, text: String) {
+//        let point = CGPoint(x: rect.midX, y: rect.midY)
         let point = CGPoint(x: rect.midX, y: rect.midY)
         
         let scnHitTestResults = sceneView.hitTest(point,
@@ -233,14 +255,34 @@ class ViewController: UIViewController {
         
         let bubbleNode = BubbleNode(text: text, color: UIColor.cyan)
         bubbleNode.worldPosition = position
-        
+        self.targetPosition = position
         sceneView.prepare([bubbleNode]) { [weak self] success in
             if success {
                 self?.sceneView.scene.rootNode.addChildNode(bubbleNode)
-                
-                self?.targetPosition = position
                 self?.textToSpeach(message: "Scanning Complete.", wait: false)
                 self?.currentPhase = .guiding
+            }
+        }
+    }
+    
+    func addFeaturePoints(pointCloud: Array<Point3D>) {
+        
+//        for
+        for i in 0..<pointCloud.count {
+            let point = pointCloud[i]
+            let position = SCNVector3(point.x, point.y, point.z)
+//            guard let cameraPosition = sceneView.pointOfView?.position else { return }
+            
+            let distance = (self.targetPosition! - position).length()
+            guard distance < 0.1 else { continue }
+            
+            let bubbleNode = BubbleNode(text: "", color: UIColor.orange)
+            bubbleNode.worldPosition = position
+            
+            sceneView.prepare([bubbleNode]) { [weak self] success in
+                if success {
+                    self?.sceneView.scene.rootNode.addChildNode(bubbleNode)
+                }
             }
         }
     }
