@@ -180,8 +180,8 @@ class ViewController: UIViewController {
                                        text: response.classification)
                     
                     // Save Camera projection Matrix at this moment
-//                    let projectionMatrix = self.sceneView.session.currentFrame?.camera.projectionMatrix
-//                    let viewMatrix = self.sceneView.session.currentFrame?.camera.viewMatrix(for: UIInterfaceOrientation.portrait)
+                    let projectionMatrix = self.sceneView.session.currentFrame?.camera.projectionMatrix
+                    let viewMatrix = self.sceneView.session.currentFrame?.camera.viewMatrix(for: UIInterfaceOrientation.portrait)
 //                    let viewProjectionMatrix = matrix_multiply(projectionMatrix!, viewMatrix!)
 ////
 //                    // Save bounding box of the object at this moment
@@ -195,26 +195,56 @@ class ViewController: UIViewController {
 //                    let pointCloudStr = self.pointCloud2Str(pointCloud: self.scenePointCloud)
                     
                     self.addFeaturePoints(pointCloud: self.scenePointCloud)
-//                    let depthMap = self.sceneView.session.currentFrame?.sceneDepth?.depthMap
-//                    var depthMapFloatArray: Array<[Float16]> = Array()
+                    let depthMap = self.sceneView.session.currentFrame?.sceneDepth?.depthMap
+                    var depthMapFloatArray: Array<[Float32]> = Array()
 //
-//                    if let depth = depthMap{
-//                        let depthWidth = CVPixelBufferGetWidth(depth)
-//                        let depthHeight = CVPixelBufferGetHeight(depth)
-//                        CVPixelBufferLockBaseAddress(depth, CVPixelBufferLockFlags(rawValue: 0))
-//
-//                        let floatBuffer = unsafeBitCast(CVPixelBufferGetBaseAddress(depth), to: UnsafeMutablePointer<Float>.self)
-//                        for y in 0...depthHeight-1{
-//                            var distancesLine = [Float16]()
-//                            for x in 0...depthWidth-1{
-//                                let distanceAtXYPoint = floatBuffer[y * depthWidth + x]
-//                                distancesLine.append(Float16(distanceAtXYPoint))
-//                            }
-//                            depthMapFloatArray.append(distancesLine)
-//                            print(distancesLine)
-//                        }
-//                        CVPixelBufferUnlockBaseAddress(depth, CVPixelBufferLockFlags(rawValue: 0))
-//                    }
+                    if let depth = depthMap{
+                        let depthWidth = CVPixelBufferGetWidth(depth)
+                        let depthHeight = CVPixelBufferGetHeight(depth)
+                        CVPixelBufferLockBaseAddress(depth, CVPixelBufferLockFlags(rawValue: 0))
+
+                        let floatBuffer = unsafeBitCast(CVPixelBufferGetBaseAddress(depth), to: UnsafeMutablePointer<Float32>.self)
+                        for x in 0...depthHeight-1{
+                            var distancesLine = [Float32]()
+                            for y in 0...depthWidth-1{
+                                let distanceAtXYPoint = floatBuffer[x * depthWidth + y]
+                                distancesLine.append(Float32(distanceAtXYPoint))
+                            }
+                            depthMapFloatArray.append(distancesLine)
+                            print(distancesLine)
+                        }
+                        CVPixelBufferUnlockBaseAddress(depth, CVPixelBufferLockFlags(rawValue: 0))
+                    }
+                    
+                    print("---")
+                    
+                    if let depth = depthMap{
+                        let depthWidth = CVPixelBufferGetWidth(depth)
+                        let depthHeight = CVPixelBufferGetHeight(depth)
+                        
+                        let minX = Int(response.boundingBox.minX * CGFloat(depthHeight)) //bottom
+                        let maxX = Int(response.boundingBox.maxX * CGFloat(depthHeight)) //top
+
+                        let minY = Int(response.boundingBox.minY * CGFloat(depthWidth))  // left
+                        let maxY = Int(response.boundingBox.maxY * CGFloat(depthWidth))  // right
+                        
+                        CVPixelBufferLockBaseAddress(depth, CVPixelBufferLockFlags(rawValue: 0))
+
+                        let floatBuffer = unsafeBitCast(CVPixelBufferGetBaseAddress(depth), to: UnsafeMutablePointer<Float32>.self)
+                        for x in minX-10...maxX+10{
+                            var distancesLine = [Float32]()
+                            for y in minY-10...maxY+10{
+                                let distanceAtXYPoint = floatBuffer[x * depthWidth + y]
+                                distancesLine.append(Float32(distanceAtXYPoint))
+                            }
+                            depthMapFloatArray.append(distancesLine)
+                            print(distancesLine)
+                        }
+                        CVPixelBufferUnlockBaseAddress(depth, CVPixelBufferLockFlags(rawValue: 0))
+                    }
+                    
+                    
+                    
 //
 
 //                    print("--##--")
