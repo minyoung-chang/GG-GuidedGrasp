@@ -35,7 +35,7 @@ class ViewController: UIViewController {
     var handler: VNImageRequestHandler?
     
     var objectDetectionService = ObjectDetectionService()
-    let throttler = Throttler(minimumDelay: 0.5, queue: .global(qos: .userInteractive))
+    let throttler = Throttler(minimumDelay: 0.5, queue: .main)
     
     let guidingTool = GuidingTool()
     
@@ -70,6 +70,14 @@ class ViewController: UIViewController {
     var wristCenter: CGPoint?
     
     
+    
+    
+    let mtdevice: MTLDevice = MTLCreateSystemDefaultDevice()!
+    var mtqueue: MTLCommandQueue!
+    var mtdepthtex: MTLTexture!
+    var mtdepthtexout: MTLTexture!
+    var mtdepthbufout: MTLBuffer!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         sceneView.delegate = self
@@ -78,6 +86,11 @@ class ViewController: UIViewController {
         
         // Enable Default Lighting - makes the 3D text a bit poppier.
         sceneView.autoenablesDefaultLighting = true
+        
+        let audioSession = AVAudioSession.sharedInstance()
+        try! audioSession.setCategory(.playback, mode: .default, options: .duckOthers)
+        
+        mtqueue = mtdevice.makeCommandQueue()!
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -165,6 +178,50 @@ class ViewController: UIViewController {
         
         guard let pixelBuffer = sceneView.session.currentFrame?.capturedImage else { return }
         
+        
+        let depth = self.sceneView.session.currentFrame!.sceneDepth!.depthMap
+        let depthWidth = CVPixelBufferGetWidth(depth)
+        let depthHeight = CVPixelBufferGetHeight(depth)
+        
+        let td = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .r32Float, width: depthWidth, height: depthHeight, mipmapped: false)
+        td.usage = .shaderRead
+        
+        mtdepthtex = mtdevice.makeTexture(descriptor:td)!
+        
+        let outtd = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .r32Float, width: depthWidth, height: depthHeight, mipmapped: false)
+        outtd.usage = .shaderWrite
+        
+        mtdepthtexout = mtdevice.makeTexture(descriptor:outtd)!
+        mtdepthbufout = mtdevice.makeBuffer(
+            length: depthWidth*depthHeight*MemoryLayout<Float>.size,
+            options: .storageModeShared
+        )!
+        
+        let buffer = mtqueue.makeCommandBuffer()!
+        let c_encoder = buffer.makeComputeCommandEncoder()!
+        let mf = mtdevice.makeDefaultLibrary()!.makeFunction(name: "grayscaleKernel")!
+        let pipeline = try! mtdevice.makeComputePipelineState(function: mf)
+        
+        CVPixelBufferLockBaseAddress(depth, CVPixelBufferLockFlags(rawValue: 0))
+        mtdepthtex.replace(region: MTLRegion(origin: MTLOrigin(x: 0, y: 0, z: 0), size: MTLSize(width: mtdepthtex.width, height: mtdepthtex.height, depth: mtdepthtex.depth)), mipmapLevel: 0, withBytes: CVPixelBufferGetBaseAddress(depth)!, bytesPerRow: mtdepthtex.width * MemoryLayout<Float>.size)
+        CVPixelBufferUnlockBaseAddress(depth, CVPixelBufferLockFlags(rawValue: 0))
+        
+        c_encoder.setComputePipelineState(pipeline)
+        c_encoder.setTexture(mtdepthtex, index: 0)
+        c_encoder.setTexture(mtdepthtexout, index: 1)
+        c_encoder.dispatchThreads(MTLSize(
+            width: mtdepthtex.width,
+            height: mtdepthtex.height,
+            depth: 1),
+            threadsPerThreadgroup: MTLSize(width: 16,height: 16,depth: 1)
+        )
+        c_encoder.endEncoding()
+        let b_encoder = buffer.makeBlitCommandEncoder()!
+        b_encoder.copy(from: mtdepthtexout, sourceSlice: 0, sourceLevel: 0, sourceOrigin: MTLOrigin(x: 0, y: 0, z: 0), sourceSize: MTLSize(width: mtdepthtex.width, height: mtdepthtex.height, depth: mtdepthtex.depth), to: mtdepthbufout, destinationOffset: 0, destinationBytesPerRow: mtdepthtex.width * MemoryLayout<Float>.size, destinationBytesPerImage: mtdepthtex.width * mtdepthtex.height * MemoryLayout<Float>.size)
+        b_encoder.endEncoding()
+        
+        buffer.commit()
+        
         objectDetectionService.detect(on: .init(pixelBuffer: pixelBuffer)) { [weak self] result in
             guard let self = self else { return }
             switch result {
@@ -193,6 +250,7 @@ class ViewController: UIViewController {
                     
 //                    let camDataStr = self.camData2String(minX: minX, maxX: maxX, minY: minY, maxY: maxY, projectionMatrix: viewProjectionMatrix)
 //                    let pointCloudStr = self.pointCloud2Str(pointCloud: self.scenePointCloud)
+                    buffer.waitUntilCompleted()
                     
                     self.addFeaturePoints(pointCloud: self.scenePointCloud)
                     let depthMap = self.sceneView.session.currentFrame?.sceneDepth?.depthMap
