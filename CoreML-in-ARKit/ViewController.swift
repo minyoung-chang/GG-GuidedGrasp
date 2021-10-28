@@ -61,6 +61,7 @@ class ViewController: UIViewController {
     @IBOutlet var sceneView: ARSCNView!
     @IBOutlet weak var sessionInfoLabel: UILabel!
     
+    @IBOutlet var resetButton: UIButton!
     
     private var handPoseRequest = VNDetectHumanHandPoseRequest()
     var thumbTip: CGPoint?
@@ -83,6 +84,8 @@ class ViewController: UIViewController {
         sceneView.delegate = self
         sceneView.session.delegate = self
         sceneView.scene = SCNScene()
+        
+        resetButton.isEnabled = false
         
         // Enable Default Lighting - makes the 3D text a bit poppier.
         sceneView.autoenablesDefaultLighting = true
@@ -363,7 +366,7 @@ class ViewController: UIViewController {
             
             let distance = (self.targetPosition! - position).length()
             guard distance < 0.1 else { continue }
-            
+            //mtdepthbufout
             let bubbleNode = BubbleNode(text: "", color: UIColor.orange)
             bubbleNode.worldPosition = position
             
@@ -597,9 +600,12 @@ class ViewController: UIViewController {
             let message = """
                             Process Complete.
                             \(self.targetObject) in front of the hand.
+                            Tap to restart.
                             """
             textToSpeach(message: message, wait: false)
             self.updateMessage(message: message)
+            
+            resetButton.isEnabled = true
         }
     }
     
@@ -690,9 +696,9 @@ extension ViewController: ARSessionDelegate {
         let location = SCNVector3(transform.m41, transform.m42, transform.m43)
         let currentPositionOfCamera = orientation + location
         
-        if let lastLocation = lastLocation {
-            let speed = (lastLocation - currentPositionOfCamera).length()
-            isLoopShouldContinue = speed < 0.005   // default 0.0025
+        if lastLocation != nil{
+            //let speed = (lastLocation - currentPositionOfCamera).length()
+            isLoopShouldContinue = sceneView.scene.rootNode.childNodes.count < 100
         }
         lastLocation = currentPositionOfCamera
         

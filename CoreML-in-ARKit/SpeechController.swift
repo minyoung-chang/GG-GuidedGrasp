@@ -25,6 +25,10 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
     
     @IBOutlet var recordButton: UIButton!
     
+    @IBAction func myUnwindAction(unwindSegue: UIStoryboardSegue){
+        
+    }
+    
     // MARK: View Controller Lifecycle
     
     public override func viewDidLoad() {
@@ -38,7 +42,7 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
         super.viewDidAppear(animated)
         
         
-        speechSynth.speak(AVSpeechUtterance(string: "What are you looking for"))
+        speechSynth.speak(AVSpeechUtterance(string: "Press and hold down on the screen to record the target object"))
         
         // Configure the SFSpeechRecognizer object already
         // stored in a local member variable.
@@ -81,7 +85,7 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
         
         // Configure the audio session for the app.
         let audioSession = AVAudioSession.sharedInstance()
-        try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
+        try audioSession.setCategory(.playAndRecord, mode: .default, options: .duckOthers)
         try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
         let inputNode = audioEngine.inputNode
 
@@ -103,14 +107,17 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
                 // Update the text view with the results.
                 self.textView.text = result.bestTranscription.formattedString
                 print("Text \(result.bestTranscription.formattedString)")
+                var foundobj = false
                 for word in result.transcriptions {
                     if word.formattedString.lowercased() == "bottle"
                         || word.formattedString.lowercased() == "cup"{
                         
                         self.performSegue(withIdentifier: "speakword", sender: word.formattedString)
-                        
+                        foundobj = true
+                        break
                     }
                 }
+                
                 
                 // Stop recognizing speech if there is a problem.
                 self.audioEngine.stop()
@@ -122,6 +129,11 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
 
                 self.recordButton.isEnabled = true
                 self.recordButton.setTitle("Start Recording", for: [])
+                
+                if (!foundobj) {
+                    self.speechSynth.speak(AVSpeechUtterance(string: "Can you repeat that"))
+                    
+                }
             }
             
             
@@ -164,19 +176,23 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
     // MARK: Interface Builder actions
     
     @IBAction func recordButtonTapped() {
-        if audioEngine.isRunning {
-            audioEngine.stop()
-            recognitionRequest?.endAudio()
-            recordButton.isEnabled = false
-            recordButton.setTitle("Stopping", for: .disabled)
-        } else {
-            do {
-                try startRecording()
-                recordButton.setTitle("Stop Recording", for: [])
-            } catch {
-                recordButton.setTitle("Recording Not Available", for: [])
-            }
+        
+        do {
+            try startRecording()
+            recordButton.setTitle("Stop Recording", for: [])
+        } catch {
+            recordButton.setTitle("Recording Not Available", for: [])
         }
+        
+    }
+    
+    @IBAction func recordButtonUntapped() {
+        audioEngine.stop()
+        recognitionRequest?.endAudio()
+        recordButton.isEnabled = false
+        recordButton.setTitle("Stopping", for: .disabled)
+        
+        speechSynth.speak(AVSpeechUtterance(string: "Please wait"))
     }
 }
 
