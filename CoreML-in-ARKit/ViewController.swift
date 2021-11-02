@@ -339,14 +339,14 @@ class ViewController: UIViewController {
         let position = SCNVector3(raycastResult.worldTransform.columns.3.x,
                                   raycastResult.worldTransform.columns.3.y,
                                   raycastResult.worldTransform.columns.3.z)
-        
+        self.targetPosition = position
         guard let cameraPosition = sceneView.pointOfView?.position else { return }
         let distance = (position - cameraPosition).length()
         guard distance <= 0.75 else { return }
         
         let bubbleNode = BubbleNode(text: text, color: UIColor.cyan)
         bubbleNode.worldPosition = position
-        self.targetPosition = position
+        
         sceneView.prepare([bubbleNode]) { [weak self] success in
             if success {
                 self?.sceneView.scene.rootNode.addChildNode(bubbleNode)
@@ -366,8 +366,10 @@ class ViewController: UIViewController {
             
             let distance = (self.targetPosition! - position).length()
             guard distance < 0.1 else { continue }
-            //mtdepthbufout
-            let bubbleNode = BubbleNode(text: "", color: UIColor.orange)
+            
+            let depthpixel = sceneView.session.currentFrame!.camera.projectPoint(simd_float3(point.x, point.y, point.z), orientation: .portrait, viewportSize: CGSize(width: mtdepthtex.width, height: mtdepthtex.height))
+            let pixvalue = mtdepthbufout.contents().load(fromByteOffset: MemoryLayout<Float>.size * (Int(depthpixel.y) * mtdepthtex.width + Int(depthpixel.x)), as: Float.self)
+            let bubbleNode = BubbleNode(text: "", color: UIColor(white: CGFloat(pixvalue), alpha: 1.0) )
             bubbleNode.worldPosition = position
             
             sceneView.prepare([bubbleNode]) { [weak self] success in
@@ -451,6 +453,7 @@ class ViewController: UIViewController {
         
         if willCollide {
             self.updateMessage(message: "CAUTION!")
+            textToSpeach(message: "Obstacle approaching", wait: true)
             return
         }
         
@@ -465,7 +468,7 @@ class ViewController: UIViewController {
             } else if distance < 0.75 {
                 AudioServicesPlayAlertSound(1520)   // medium
             }
-            
+            textToSpeach(message: "Go Forward", wait: true)
         case .goUp:
             textToSpeach(message: "Go Up", wait: true)
         case .goDown:
