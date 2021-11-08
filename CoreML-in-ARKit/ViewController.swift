@@ -85,7 +85,7 @@ class ViewController: UIViewController {
         sceneView.session.delegate = self
         sceneView.scene = SCNScene()
         
-        resetButton.isEnabled = false
+        resetButton.isEnabled = true
         
         // Enable Default Lighting - makes the 3D text a bit poppier.
         sceneView.autoenablesDefaultLighting = true
@@ -235,10 +235,14 @@ class ViewController: UIViewController {
                     Int(self.sceneView.bounds.height))
                 
                 if (response.classification.lowercased() == self.targetObject.lowercased()) {
+                    
+                    buffer.waitUntilCompleted()
+                    
+                    
                     // add AR Anchor on the object position
                     self.addAnnotation(rectOfInterest: rectOfInterest,
                                        text: response.classification)
-                    
+                    self.addFeaturePoints(pointCloud: self.scenePointCloud)
                     // Save Camera projection Matrix at this moment
                     let projectionMatrix = self.sceneView.session.currentFrame?.camera.projectionMatrix
                     let viewMatrix = self.sceneView.session.currentFrame?.camera.viewMatrix(for: UIInterfaceOrientation.portrait)
@@ -253,9 +257,7 @@ class ViewController: UIViewController {
                     
 //                    let camDataStr = self.camData2String(minX: minX, maxX: maxX, minY: minY, maxY: maxY, projectionMatrix: viewProjectionMatrix)
 //                    let pointCloudStr = self.pointCloud2Str(pointCloud: self.scenePointCloud)
-                    buffer.waitUntilCompleted()
                     
-                    self.addFeaturePoints(pointCloud: self.scenePointCloud)
                     let depthMap = self.sceneView.session.currentFrame?.sceneDepth?.depthMap
                     var depthMapFloatArray: Array<[Float32]> = Array()
 //
@@ -346,6 +348,7 @@ class ViewController: UIViewController {
         
         let bubbleNode = BubbleNode(text: text, color: UIColor.cyan)
         bubbleNode.worldPosition = position
+    
         
         sceneView.prepare([bubbleNode]) { [weak self] success in
             if success {
@@ -357,14 +360,14 @@ class ViewController: UIViewController {
     }
     
     func addFeaturePoints(pointCloud: Array<Point3D>) {
-        
+        guard let targetPosition = targetPosition else {return}
 //        for
         for i in 0..<pointCloud.count {
             let point = pointCloud[i]
             let position = SCNVector3(point.x, point.y, point.z)
 //            guard let cameraPosition = sceneView.pointOfView?.position else { return }
             
-            let distance = (self.targetPosition! - position).length()
+            let distance = (targetPosition - position).length()
             guard distance < 0.1 else { continue }
             
             let depthpixel = sceneView.session.currentFrame!.camera.projectPoint(simd_float3(point.x, point.y, point.z), orientation: .portrait, viewportSize: CGSize(width: mtdepthtex.width, height: mtdepthtex.height))
@@ -442,7 +445,7 @@ class ViewController: UIViewController {
         guard let handWorldPosition = self.handWorldPosition else {return}
         let distance = (handWorldPosition - self.targetPosition!).length()
         
-        if (distance < 0.15) {   // target object 15 cm away from the camera
+        if (distance < 0.12) {   // target object 15 cm away from the camera
             self.currentPhase = .complete
             return
         }
@@ -607,8 +610,6 @@ class ViewController: UIViewController {
                             """
             textToSpeach(message: message, wait: false)
             self.updateMessage(message: message)
-            
-            resetButton.isEnabled = true
         }
     }
     
@@ -701,7 +702,7 @@ extension ViewController: ARSessionDelegate {
         
         if lastLocation != nil{
             //let speed = (lastLocation - currentPositionOfCamera).length()
-            isLoopShouldContinue = sceneView.scene.rootNode.childNodes.count < 100
+            isLoopShouldContinue = sceneView.scene.rootNode.childNodes.count < 30
         }
         lastLocation = currentPositionOfCamera
         

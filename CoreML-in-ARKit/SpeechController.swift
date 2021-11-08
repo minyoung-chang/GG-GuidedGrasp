@@ -85,7 +85,7 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
         
         // Configure the audio session for the app.
         let audioSession = AVAudioSession.sharedInstance()
-        try audioSession.setCategory(.playAndRecord, mode: .default, options: .duckOthers)
+        try audioSession.setCategory(.record, mode: .default, options: .duckOthers)
         try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
         let inputNode = audioEngine.inputNode
 
@@ -191,6 +191,8 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
         recognitionRequest?.endAudio()
         recordButton.isEnabled = false
         recordButton.setTitle("Stopping", for: .disabled)
+        let audioSession = AVAudioSession.sharedInstance()
+        try! audioSession.setCategory(.playback, mode: .default, options: .duckOthers)
         
         speechSynth.speak(AVSpeechUtterance(string: "Please wait"))
     }
