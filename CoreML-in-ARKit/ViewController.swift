@@ -50,6 +50,8 @@ class ViewController: UIViewController {
     
     var isProcessComplete = false
     
+    var firstGuide = true
+    
     enum phaseType {
         case scanning
         case guiding
@@ -343,8 +345,10 @@ class ViewController: UIViewController {
                                   raycastResult.worldTransform.columns.3.z)
         self.targetPosition = position
         guard let cameraPosition = sceneView.pointOfView?.position else { return }
+        
         let distance = (position - cameraPosition).length()
-        guard distance <= 0.75 else { return }
+        //Distance between camera and target
+        guard distance <= 1.5 else { return }
         
         let bubbleNode = BubbleNode(text: text, color: UIColor.cyan)
         bubbleNode.worldPosition = position
@@ -352,7 +356,42 @@ class ViewController: UIViewController {
         
         sceneView.prepare([bubbleNode]) { [weak self] success in
             if success {
+                var newcloud = Array<Point3D>()
+                var maxpx = 0
+                var maxval = -Float.infinity
+                for i in 0..<self!.scenePointCloud.count {
+                    let point = self!.scenePointCloud[i]
+                    let position = SCNVector3(point.x, point.y, point.z)
+                    
+                    let distance = (self!.targetPosition! - position).length()
+                    guard distance < 0.1 else {
+                        newcloud.append(point)
+                        continue
+                    }
+                    
+                    let depthpixel = self!.sceneView.session.currentFrame!.camera.projectPoint(simd_float3(point.x, point.y, point.z), orientation: .portrait, viewportSize: CGSize(width: self!.mtdepthtex.width, height: self!.mtdepthtex.height))
+                    let pixvalue = self!.mtdepthbufout.contents().load(fromByteOffset: MemoryLayout<Float>.size * (Int(depthpixel.y) * self!.mtdepthtex.width + Int(depthpixel.x)), as: Float.self)
+                    
+                    if pixvalue > maxval {
+                        maxval = pixvalue
+                        maxpx = i
+                    }
+                    
+                    
+                }
+                let newNode = BubbleNode(text: "", color: .yellow)
+                
+                let newtarget = SCNVector3(
+                    self!.scenePointCloud[maxpx].x,
+                    self!.scenePointCloud[maxpx].y,
+                    self!.scenePointCloud[maxpx].z
+                )
+                newNode.worldPosition = newtarget
+                self!.targetPosition = newtarget
+                
+                self!.scenePointCloud = newcloud
                 self?.sceneView.scene.rootNode.addChildNode(bubbleNode)
+                self?.sceneView.scene.rootNode.addChildNode(newNode)
                 self?.textToSpeach(message: "Scanning Complete.", wait: false)
                 self?.currentPhase = .guiding
             }
@@ -372,7 +411,7 @@ class ViewController: UIViewController {
             
             let depthpixel = sceneView.session.currentFrame!.camera.projectPoint(simd_float3(point.x, point.y, point.z), orientation: .portrait, viewportSize: CGSize(width: mtdepthtex.width, height: mtdepthtex.height))
             let pixvalue = mtdepthbufout.contents().load(fromByteOffset: MemoryLayout<Float>.size * (Int(depthpixel.y) * mtdepthtex.width + Int(depthpixel.x)), as: Float.self)
-            let bubbleNode = BubbleNode(text: "", color: UIColor(white: CGFloat(pixvalue), alpha: 1.0) )
+            let bubbleNode = BubbleNode(text: "", color: UIColor(white: CGFloat(pixvalue), alpha: CGFloat(pixvalue)) )
             bubbleNode.worldPosition = position
             
             sceneView.prepare([bubbleNode]) { [weak self] success in
@@ -445,7 +484,7 @@ class ViewController: UIViewController {
         guard let handWorldPosition = self.handWorldPosition else {return}
         let distance = (handWorldPosition - self.targetPosition!).length()
         
-        if (distance < 0.12) {   // target object 15 cm away from the camera
+        if (distance < 0.07) {   // target object 15 cm away from the camera
             self.currentPhase = .complete
             return
         }
@@ -464,22 +503,38 @@ class ViewController: UIViewController {
         let targetDirection = guidingTool.checkTargetDirection(pixelValues: pixelValues)
         let message = guidingTool.getDirectionMessage(targetDirection: targetDirection, distance: distance)
         
-        switch targetDirection {
-        case .onScreen:
-            if distance < 0.35 {
-                AudioServicesPlayAlertSound(1521)   // short
-            } else if distance < 0.75 {
-                AudioServicesPlayAlertSound(1520)   // medium
+        
+        if firstGuide {
+            switch targetDirection {
+            case .goLeft:
+                textToSpeach(message: "Approaching object from the right", wait: false)
+            case .goRight:
+                textToSpeach(message: "Approaching object from the left", wait: false)
+            default:
+                textToSpeach(message: "Approaching object from above", wait: false)
+                
             }
-            textToSpeach(message: "Go Forward", wait: true)
-        case .goUp:
-            textToSpeach(message: "Go Up", wait: true)
-        case .goDown:
-            textToSpeach(message: "Go Down", wait: true)
-        case .goLeft:
-            textToSpeach(message: "Go Left", wait: true)
-        case .goRight:
-            textToSpeach(message: "Go Right", wait: true)
+            
+            firstGuide = false
+        }
+        else{
+            switch targetDirection {
+            case .onScreen:
+                if distance < 0.35 {
+                    AudioServicesPlayAlertSound(1521)   // short
+                } else if distance < 0.75 {
+                    AudioServicesPlayAlertSound(1520)   // medium
+                }
+                textToSpeach(message: "Go Forward", wait: true)
+            case .goUp:
+                textToSpeach(message: "Go Up", wait: true)
+            case .goDown:
+                textToSpeach(message: "Go Down", wait: true)
+            case .goLeft:
+                textToSpeach(message: "Go Left", wait: true)
+            case .goRight:
+                textToSpeach(message: "Go Right", wait: true)
+            }
         }
         
         self.updateMessage(message: message)
@@ -702,7 +757,7 @@ extension ViewController: ARSessionDelegate {
         
         if lastLocation != nil{
             //let speed = (lastLocation - currentPositionOfCamera).length()
-            isLoopShouldContinue = sceneView.scene.rootNode.childNodes.count < 30
+            isLoopShouldContinue = sceneView.scene.rootNode.childNodes.count < 100
         }
         lastLocation = currentPositionOfCamera
         

@@ -103,11 +103,12 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
         // Keep a reference to the task so that it can be canceled.
         recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest) { result, error in
             
+            var foundobj = false
             if let result = result {
                 // Update the text view with the results.
                 self.textView.text = result.bestTranscription.formattedString
                 print("Text \(result.bestTranscription.formattedString)")
-                var foundobj = false
+                
                 for word in result.transcriptions {
                     if word.formattedString.lowercased() == "bottle"
                         || word.formattedString.lowercased() == "cup"{
@@ -119,24 +120,25 @@ public class SpeechController: UIViewController, SFSpeechRecognizerDelegate {
                 }
                 
                 
-                // Stop recognizing speech if there is a problem.
-                self.audioEngine.stop()
                 
-                inputNode.removeTap(onBus: 0)
-
-                self.recognitionRequest = nil
-                self.recognitionTask = nil
-
-                self.recordButton.isEnabled = true
-                self.recordButton.setTitle("Start Recording", for: [])
-                
-                if (!foundobj) {
-                    self.speechSynth.speak(AVSpeechUtterance(string: "Can you repeat that"))
-                    
-                }
             }
             
+            // Stop recognizing speech if there is a problem.
+            self.audioEngine.stop()
             
+            inputNode.removeTap(onBus: 0)
+
+            self.recognitionRequest = nil
+            self.recognitionTask = nil
+
+            self.recordButton.isEnabled = true
+            self.recordButton.setTitle("Start Recording", for: [])
+            
+            if (!foundobj) {
+                self.speechSynth.speak(AVSpeechUtterance(string: "Can you repeat that"))
+                
+            }
+
             
             
         }
